@@ -36,12 +36,12 @@ struct Vec {
         return result;
     }
 
-    Vec operator-(const Vec &other) const
+    Vec operator-() const
     {
         Vec result;
-        result.x = x - other.x;
-        result.y = y - other.y;
-        result.z = z - other.z;
+        result.x = -x;
+        result.y = -y;
+        result.z = -z;
         return result; 
     }
 
@@ -58,7 +58,7 @@ struct Vec {
     {
         Vec result;
         result.x = y*other.z - z*other.y;
-        result.y = -x*other.z - z*other.x;
+        result.y = -x*other.z + z*other.x;
         result.z = x*other.y - y*other.x;
         return result; 
     }
@@ -71,9 +71,11 @@ struct Vec {
     void normalize()
     {
         double norm = sqrt(dot(*this));
-        x/=norm;
-        y/=norm;
-        z/=norm;
+        if (norm > 0.0) {
+            x/=norm;
+            y/=norm;
+            z/=norm;
+        }
     }
 };
 

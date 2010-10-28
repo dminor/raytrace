@@ -38,34 +38,35 @@ struct Triangle : public Intersectable {
         Vec ab = b - a;
         Vec ac = c - a;
 
-        double d = ray.direction.dot(normal);
-        if (d >= 0.0) {
-            Vec ap = ray.origin - a;
-            double t = ap.dot(n);
-            if (t >= 0.0) {
+        Vec qp;
+        qp.x=-ray.direction.x;
+        qp.y=-ray.direction.y;
+        qp.z=-ray.direction.z;
 
-                double e = vec_cross(qp, ap)
-                double v = vec_dot(ac, e) 
+        double d = qp.dot(normal);
+        if (d < 0.0) return false;
 
-                if (v >= 0.0 && v <= d) { 
-                    double w = -vec_dot(ab, e)
-                    if (w >= 0.0 && v + w <= d) { 
-                        double ood = 1.0/d;
-                        double t = t * ood;
-                        double v = v * ood; 
-                        double w = w * ood; 
+        Vec ap = ray.origin - a;
+        double t = ap.dot(normal);
+        if (t < 0.0) return false; 
 
-                        pt = a + ac*v + ab*w
-                        norm = normal;
+        Vec e = qp.cross(ap);
+        double v = ac.dot(e);
+        if (v < 0.0 || v > d) return false; 
 
-                        return true; 
-                    }
-                }
-            } 
-        }
+        double w = -ab.dot(e);
+        if (w < 0.0 || v + w > d) return false; 
 
-        return false;
-    } 
+        double ood = 1.0/d;
+        t *= ood;
+        v *= ood; 
+        w *= ood; 
+
+        pt = a + ac*v + ab*w;
+        norm = normal;
+
+        return true; 
+   } 
 };
 
 #endif

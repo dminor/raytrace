@@ -24,27 +24,86 @@ THE SOFTWARE.
 #define TRIANGLE_MESH_H_
 
 #include "intersectable.h" 
+#include "triangle.h"
+
+#include <fstream> 
+#include <vector>
 
 struct TriangleMesh : public Intersectable {
 
-    struct Face {
-        size_t i;
-        size_t j;
-        size_t k;
-    };
+    Sphere bounds;
 
-    std::vector<Point> vertices;
-    std::vector<Face> faces;
-    std::vector<Vec> normals;
+    std::vector<Triangle> faces;
 
-    bool open_obj(const char *filename)
+    bool open(const char *filename)
     {
+        std::ifstream f(filename);
+        if (!f) return false;
+
+        char c;
+        std::vector<Point> vertices;
+        Point pt;
+        Triangle t;
+        size_t i, j, k;
+
+        bounds.centre.x = bounds.centre.y = bounds.centre.z = 0.0;
+        bounds.radius = 0.0;
+
+        while (!f.eof()) {       
+ 
+            f >> c;
+
+            if (c == 'v') {
+                f >> pt.x;
+                f >> pt.y;
+                f >> pt.z;
+
+                if (fabs(pt.x) > bounds.radius) bounds.radius = fabs(pt.x);
+                if (fabs(pt.y) > bounds.radius) bounds.radius = fabs(pt.y);
+                if (fabs(pt.z) > bounds.radius) bounds.radius = fabs(pt.z);
+
+                vertices.push_back(pt); 
+ 
+            } else if (c == 'f') {
+                f >> i;
+                f >> j;
+                f >> k;
+
+                //build triangle
+                t.a = vertices[i - 1];
+                t.b = vertices[j - 1];
+                t.c = vertices[k - 1];
+
+                //calculate normal
+                Vec ab = vertices[j - 1] - vertices[i - 1];
+                Vec ac = vertices[k - 1] - vertices[i - 1];
+                t.normal = ab.cross(ac);
+                faces.push_back(t); 
+
+            } else {
+                //ignore groups, materials, etc. for now
+            }
+
+        }
+
+        f.close(); 
+
+        return true;
 
     }
 
     virtual bool intersect(const Ray &ray, Point &pt, Vec &norm)
     {
+        if (bounds.intersect(ray, pt, norm)) { 
+            for (std::vector<Triangle>::iterator itor = faces.begin(); itor != faces.end(); ++itor) {
+                if (itor->intersect(ray, pt, norm)) {
+                    norm.normalize();
+                    return true;
+                }
+            }
+        }
 
+        return false;
     }
 
 };

@@ -22,7 +22,12 @@ THE SOFTWARE.
 
 #include "image.h"
 #include "sphere.h"
+#include "triangle.h"
+#include "triangle_mesh.h"
 #include "vec.h"
+
+const int height = 512;
+const int width = 512;
 
 int main(int argc, char **argv)
 { 
@@ -36,25 +41,39 @@ int main(int argc, char **argv)
     light.normalize();
 
     //scene object
+    /*
     Sphere s;
     s.centre.x = 1.0; s.centre.y = 0.0; s.centre.z = 2.0;
     s.radius = 2.0;
+    */
+
+    /*
+    Triangle t;
+    t.a.x = 0.5; t.a.y = 0.5; t.a.z = 2.0;
+    t.b.x = 0.0; t.b.y = 0.5; t.b.z = 2.0;
+    t.c.x = 0.5; t.c.y = 0.0; t.c.z = 2.0;
+    t.normal.x = 0.0; t.normal.y = 0.0; t.normal.z=-1.0;
+    */
+
+    TriangleMesh teapot;
+    teapot.open("../data/teapot.obj");
 
     //intersection point and normal
     Point pt;
     Vec n;
 
     //create image and trace a ray for each pixel
-    Image i(512, 512);
-    for (size_t x = 0; x < 512; ++x) {
-        for (size_t y = 0; y < 512; ++y) { 
+    Image i(width, height);
+    for (size_t x = 0; x < width; ++x) {
+        for (size_t y = 0; y < height; ++y) { 
 
             //calculate ray direction vector
-            r.direction.x = (double)x/512.0 - 0.5;
-            r.direction.y = -((double)y/512.0 - 0.5); 
+            r.direction.x = (double)x/width - 0.5;
+            r.direction.y = -((double)y/height - 0.5); 
             r.direction.z = 1.0;
 
-            if (s.intersect(r, pt, n)) { 
+            if (teapot.intersect(r, pt, n)) {
+ 
                 //Phong shading
                 double c = n.dot(light);
                 if (c < 0.0) c = 0.0; 
