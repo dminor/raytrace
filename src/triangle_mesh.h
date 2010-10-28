@@ -23,6 +23,8 @@ THE SOFTWARE.
 #ifndef TRIANGLE_MESH_H_
 #define TRIANGLE_MESH_H_
 
+#include <limits>
+
 #include "intersectable.h" 
 #include "triangle.h"
 
@@ -94,16 +96,29 @@ struct TriangleMesh : public Intersectable {
 
     virtual bool intersect(const Ray &ray, Point &pt, Vec &norm)
     {
+        bool hit = false;
+        double closest_distance = std::numeric_limits<double>::max(); 
+
         if (bounds.intersect(ray, pt, norm)) { 
             for (std::vector<Triangle>::iterator itor = faces.begin(); itor != faces.end(); ++itor) {
-                if (itor->intersect(ray, pt, norm)) {
-                    norm.normalize();
-                    return true;
+                Point temp_pt;
+                Vec temp_norm;
+                if (itor->intersect(ray, temp_pt, temp_norm)) {
+                    hit = true;
+
+                    Vec dist_vec = temp_pt - ray.origin;
+                    double distance = dist_vec.dot(dist_vec);
+                    if (distance < closest_distance) {
+                        closest_distance = distance; 
+                        pt = temp_pt;
+                        norm = temp_norm;
+                    }
                 }
             }
         }
 
-        return false;
+        if (hit) norm.normalize();
+        return hit;
     }
 
 };
