@@ -26,16 +26,21 @@ THE SOFTWARE.
 #include <limits>
 
 #include "intersectable.h" 
-#include "triangle.h"
 
 #include <fstream> 
 #include <vector>
 
 struct TriangleMesh : public Intersectable {
 
+    struct Face {
+        size_t i, j, k;
+        Vec normal;
+    };
+
     Sphere bounds;
 
-    std::vector<Triangle> faces;
+    std::vector<Vec> vertices;
+    std::vector<Face> faces;
 
     bool open(const char *filename)
     {
@@ -43,9 +48,8 @@ struct TriangleMesh : public Intersectable {
         if (!f) return false;
 
         char c;
-        std::vector<Point> vertices;
-        Point pt;
-        Triangle t;
+        Vec pt;
+        Face face;
         size_t i, j, k;
 
         bounds.centre.x = bounds.centre.y = bounds.centre.z = 0.0;
@@ -67,20 +71,15 @@ struct TriangleMesh : public Intersectable {
                 vertices.push_back(pt); 
  
             } else if (c == 'f') {
-                f >> i;
-                f >> j;
-                f >> k;
-
-                //build triangle
-                t.a = vertices[i - 1];
-                t.b = vertices[j - 1];
-                t.c = vertices[k - 1];
+                f >> face.i; face.i -= 1;
+                f >> face.j; face.j -= 1;
+                f >> face.k; face.k -= 1;
 
                 //calculate normal
-                Vec ab = vertices[j - 1] - vertices[i - 1];
-                Vec ac = vertices[k - 1] - vertices[i - 1];
-                t.normal = ab.cross(ac);
-                faces.push_back(t); 
+                Vec ab = vertices[face.j] - vertices[face.i];
+                Vec ac = vertices[face.k] - vertices[face.i];
+                face.normal = ab.cross(ac);
+                faces.push_back(face); 
 
             } else {
                 //ignore groups, materials, etc. for now
@@ -94,16 +93,16 @@ struct TriangleMesh : public Intersectable {
 
     }
 
-    virtual bool intersect(const Ray &ray, Point &pt, Vec &norm)
+    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm)
     {
         bool hit = false;
         double closest_distance = std::numeric_limits<double>::max(); 
 
         if (bounds.intersect(ray, pt, norm)) { 
-            for (std::vector<Triangle>::iterator itor = faces.begin(); itor != faces.end(); ++itor) {
-                Point temp_pt;
+            for (std::vector<Face>::iterator itor = faces.begin(); itor != faces.end(); ++itor) {
+                Vec temp_pt;
                 Vec temp_norm;
-                if (itor->intersect(ray, temp_pt, temp_norm)) {
+                if (intersect_face(ray, *itor, temp_pt, temp_norm)) {
                     hit = true;
 
                     Vec dist_vec = temp_pt - ray.origin;
@@ -120,6 +119,48 @@ struct TriangleMesh : public Intersectable {
         if (hit) norm.normalize();
         return hit;
     }
+
+    // From Ericson, C. (2005) Real-Time Collision Detection, Morgan Kauffman,
+    // San Francisco, CA, pp. 190 - 192
+    virtual bool intersect_face(const Ray &ray, const Face &f, Vec &pt, Vec &norm)
+    {
+
+        Vec &a = vertices[f.i];
+        Vec &b = vertices[f.j];
+        Vec &c = vertices[f.k]; 
+
+        Vec ab = b - a;
+        Vec ac = c - a;
+
+        Vec qp;
+        qp.x=-ray.direction.x;
+        qp.y=-ray.direction.y;
+        qp.z=-ray.direction.z;
+
+        double d = qp.dot(f.normal);
+        if (d < 0.0) return false;
+
+        Vec ap = ray.origin - a;
+        double t = ap.dot(f.normal);
+        if (t < 0.0) return false; 
+
+        Vec e = qp.cross(ap);
+        double v = ac.dot(e);
+        if (v < 0.0 || v > d) return false; 
+
+        double w = -ab.dot(e);
+        if (w < 0.0 || v + w > d) return false; 
+
+        double ood = 1.0/d;
+        t *= ood;
+        v *= ood; 
+        w *= ood; 
+
+        pt = a + ac*v + ab*w;
+        norm = f.normal;
+
+        return true; 
+   } 
 
 };
 

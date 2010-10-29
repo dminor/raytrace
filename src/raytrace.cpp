@@ -21,8 +21,9 @@ THE SOFTWARE.
 */
 
 #include "image.h"
+#include "plane.h"
 #include "sphere.h"
-#include "triangle.h"
+#include "transform.h"
 #include "triangle_mesh.h"
 #include "vec.h"
 
@@ -33,33 +34,43 @@ int main(int argc, char **argv)
 { 
     //eyepoint
     Ray r;
-    r.origin.x = 0.0; r.origin.y = 0.0; r.origin.z = -10.0;
+    r.origin.x = 0.0; r.origin.y = 0.0; r.origin.z = -15.0;
 
     //light source
     Vec light;
     light.x = 1.0; light.y = 0.5; light.z = -1.0;
     light.normalize();
 
-    //scene object
-    /*
-    Sphere s;
-    s.centre.x = 1.0; s.centre.y = 0.0; s.centre.z = 2.0;
-    s.radius = 2.0;
-    */
+    //scene
+    Transform scene;
 
-    /*
-    Triangle t;
-    t.a.x = 0.5; t.a.y = 0.5; t.a.z = 2.0;
-    t.b.x = 0.0; t.b.y = 0.5; t.b.z = 2.0;
-    t.c.x = 0.5; t.c.y = 0.0; t.c.z = 2.0;
-    t.normal.x = 0.0; t.normal.y = 0.0; t.normal.z=-1.0;
-    */
+    //teapot
+    Transform teapot;
+    teapot.translation.x = 2.0; teapot.translation.y = 2.0;
+    Quat q1(3.14/4, 0, 1, 0); 
+    Quat q2(-3.14/6, 0, 0, 1);
+    teapot.rotation = q1*q2;
 
-    TriangleMesh teapot;
-    teapot.open("../data/teapot.obj");
+    TriangleMesh teapot_obj;
+    teapot_obj.open("../data/teapot.obj");
+    teapot.children.push_back(&teapot_obj);
+
+    scene.children.push_back(&teapot);
+
+    //plane
+    Plane plane;
+    plane.p.y = -1.0;
+    plane.normal.x = 0.0; plane.normal.y = 1.0; plane.normal.z = 0.0;
+    scene.children.push_back(&plane);
+
+    //sphere
+    Sphere sphere;
+    sphere.centre.x = -5.0; sphere.centre.z = 2.0;
+    sphere.radius = 2.0;
+    scene.children.push_back(&sphere);
 
     //intersection point and normal
-    Point pt;
+    Vec pt;
     Vec n;
 
     //create image and trace a ray for each pixel
@@ -72,7 +83,7 @@ int main(int argc, char **argv)
             r.direction.y = -((double)y/height - 0.5); 
             r.direction.z = 1.0;
 
-            if (teapot.intersect(r, pt, n)) {
+            if (scene.intersect(r, pt, n)) {
  
                 //Phong shading
                 double c = n.dot(light);

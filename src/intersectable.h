@@ -23,14 +23,16 @@ THE SOFTWARE.
 #ifndef INTERSECTABLE_H_
 #define INTERSECTABLE_H_
 
-#include "point.h"
 #include "ray.h"
+#include "vec.h"
+
+const double INTERSECTION_EPSILON = 0.00001;
 
 struct Intersectable {
 
     virtual ~Intersectable() {};
 
-    virtual bool intersect(const Ray &ray, Point &pt, Vec &norm) = 0;
+    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm) = 0;
 };
 
 #endif

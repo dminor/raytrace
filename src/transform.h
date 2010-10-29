@@ -20,35 +20,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef SPHERE_H_
-#define SPHERE_H_
+#ifndef TRANSFORM_H_
+#define TRANSFORM_H_
 
-#include <cmath>
+#include <limits>
+#include <vector>
 
 #include "intersectable.h"
+#include "quat.h" 
 
-struct Sphere : public Intersectable {
+struct Transform : public Intersectable {
 
-    Vec centre;
-    double radius;
+    Vec translation;
+    Quat rotation;
+
+    std::vector<Intersectable *> children;
+
+    virtual ~Transform() {};
 
     virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm)
     {
-        Vec e_minus_c = ray.origin - centre;
-        double d_dot_d = ray.direction.dot(ray.direction);
-        double d_dot_e_minus_c = ray.direction.dot(e_minus_c);
-        double disc = d_dot_e_minus_c*d_dot_e_minus_c - d_dot_d*(e_minus_c.dot(e_minus_c) - radius*radius);
+        Ray r;
+        Quat conj_rotation = rotation.conjugate(); 
+        r.origin = (conj_rotation*(ray.origin - translation)*rotation).v;
+        r.direction = (conj_rotation*ray.direction*rotation).v; 
 
-        if (disc > 0.0) { 
-            double t = -(ray.direction.dot(e_minus_c) + sqrt(disc))/d_dot_d;
-            pt = ray.origin + (ray.direction*t);
-            norm = (pt - centre) * (1.0/radius);
-            return true;
-        } else {
-            return false;
+        bool hit = false;
+        double closest_distance = std::numeric_limits<double>::max(); 
+        for (std::vector<Intersectable *>::iterator itor = children.begin(); itor != children.end(); ++itor) {
+            Vec temp_pt;
+            Vec temp_norm;
+            if ((*itor)->intersect(r, temp_pt, temp_norm)) {
+                hit = true;
+
+                Vec dist_vec = temp_pt - ray.origin;
+                double distance = dist_vec.dot(dist_vec);
+                if (distance < closest_distance) {
+                    closest_distance = distance; 
+                    pt = temp_pt;
+                    norm = temp_norm;
+                }
+            }
         } 
+
+        return hit;
     }
 };
 
 #endif
+
 

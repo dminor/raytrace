@@ -27,6 +27,19 @@ struct Vec {
 
     double x, y, z;
 
+    Vec()
+    {
+        x = y = z = 0.0;
+    }
+
+    Vec(double x, double y, double z) : x(x), y(y), z(z)
+    {
+    }
+
+    virtual ~Vec()
+    {
+    }
+
     Vec operator+(const Vec &other) const
     {
         Vec result;
@@ -35,6 +48,16 @@ struct Vec {
         result.z = z + other.z;
         return result;
     }
+
+    Vec operator-(const Vec &other) const
+    {
+        Vec result;
+        result.x = x - other.x;
+        result.y = y - other.y;
+        result.z = z - other.z;
+        return result;
+    }
+
 
     Vec operator-() const
     {

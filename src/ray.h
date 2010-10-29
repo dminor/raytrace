@@ -23,11 +23,10 @@ THE SOFTWARE.
 #ifndef RAY_H_
 #define RAY_H_
 
-#include "point.h"
 #include "vec.h"
 
 struct Ray {
-    Point origin;
+    Vec origin;
     Vec direction; 
 };
 

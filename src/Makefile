@@ -12,5 +12,9 @@ all: $(OBJS)
 .cpp.o:
 	g++ $(INCS) $(CFLAGS) -c $< -o $@
 
+raytrace.o: intersectable.h plane.h quat.h ray.h sphere.h triangle_mesh.h vec.h
+
+image.o: image.h
+
 clean:
 	rm *.o $(TARGET) 

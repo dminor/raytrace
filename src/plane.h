@@ -23,11 +23,35 @@ THE SOFTWARE.
 #ifndef PLANE_H_
 #define PLANE_H_
 
+#include <cmath>
+
 #include "intersectable.h"
+#include "vec.h"
 
 struct Plane : public Intersectable {
 
-    virtual bool intersect(const Ray &ray, Point &pt, Vec &norm)
+    Vec p;
+    Vec normal;
+
+    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm)
+    {
+        double n = (p - ray.origin).dot(normal);
+        double d = ray.direction.dot(normal);
+
+        //check for near-zero values
+        if (fabs(d) < INTERSECTION_EPSILON) {
+            if (fabs(n) < INTERSECTION_EPSILON) return true;  //in plane
+            else return false;  //parallel to plane
+        }
+
+        //calculate hit 
+        double t = n/d; 
+        if (t < 0.0) return false; //behind ray origin
+
+        pt = ray.origin + ray.direction*t;
+        norm = normal;
+        return true;
+    }
 
 };
 
