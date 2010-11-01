@@ -3,7 +3,7 @@ INCS = -I../../include
 LIBS = -lpng 
 CFLAGS = -g
 LDFLAGS = 
-OBJS = raytrace.o image.o
+OBJS = raytrace.o image.o scene.o
 TARGET = ../bin/raytrace
 
 all: $(OBJS)
@@ -12,9 +12,13 @@ all: $(OBJS)
 .cpp.o:
 	g++ $(INCS) $(CFLAGS) -c $< -o $@
 
-raytrace.o: intersectable.h plane.h quat.h ray.h sphere.h triangle_mesh.h vec.h
 
 image.o: image.h
+
+scene.o: scene.h
+
+raytrace.o: group.h intersectable.h plane.h quat.h ray.h sphere.h triangle_mesh.h vec.h \
+            lambertian_material.h
 
 clean:
 	rm *.o $(TARGET) 

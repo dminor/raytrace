@@ -21,7 +21,9 @@ THE SOFTWARE.
 */
 
 #include "image.h"
+#include "lambertian_material.h"
 #include "plane.h"
+#include "scene.h"
 #include "sphere.h"
 #include "transform.h"
 #include "triangle_mesh.h"
@@ -36,40 +38,56 @@ int main(int argc, char **argv)
     Ray r;
     r.origin.x = 0.0; r.origin.y = 0.0; r.origin.z = -15.0;
 
-    //light source
-    Vec light;
-    light.x = 1.0; light.y = 0.5; light.z = -1.0;
-    light.normalize();
-
     //scene
-    Transform scene;
+    Scene scene;
+
+    //light source
+    Light *light = new Light;
+    light->direction.x = 1.0; light->direction.y = 0.5; light->direction.z = -1.0;
+    light->direction.normalize();
+
+    scene.lights.push_back(light);
 
     //teapot
-    Transform teapot;
-    teapot.translation.x = 2.0; teapot.translation.y = 2.0;
+    Transform *teapot = new Transform;
+    teapot->translation.x = 2.0; teapot->translation.y = 2.0;
     Quat q1(3.14/4, 0, 1, 0); 
     Quat q2(-3.14/6, 0, 0, 1);
-    teapot.rotation = q1*q2;
+    teapot->rotation = q1*q2;
 
-    TriangleMesh teapot_obj;
-    teapot_obj.open("../data/teapot.obj");
-    teapot.children.push_back(&teapot_obj);
+    TriangleMesh *teapot_obj = new TriangleMesh;
+    teapot_obj->open("../data/teapot.obj");
+    teapot->child = teapot_obj;
+    LambertianMaterial *mat = new LambertianMaterial;
+    mat->r = 1.0; mat->g = 0.0; mat->b = 0.0;
+    teapot_obj->material = mat;
 
-    scene.children.push_back(&teapot);
+    scene.children.push_back(teapot);
 
     //plane
-    Plane plane;
-    plane.p.y = -1.0;
-    plane.normal.x = 0.0; plane.normal.y = 1.0; plane.normal.z = 0.0;
-    scene.children.push_back(&plane);
+    Plane *plane = new Plane;
+    plane->p.y = -1.0;
+    plane->normal.x = 0.0; plane->normal.y = 1.0; plane->normal.z = 0.0;
+
+    mat = new LambertianMaterial;
+    mat->r = 0.0; mat->g = 1.0; mat->b = 0.0;
+    plane->material = mat;
+
+    scene.children.push_back(plane);
 
     //sphere
-    Sphere sphere;
-    sphere.centre.x = -5.0; sphere.centre.z = 2.0;
-    sphere.radius = 2.0;
-    scene.children.push_back(&sphere);
+    Sphere *sphere = new Sphere;
+    sphere->centre.x = -5.0; sphere->centre.z = 2.0;
+    sphere->radius = 2.0;
 
-    //intersection point and normal
+    mat = new LambertianMaterial;
+    mat->r = 0.0; mat->g = 0.0; mat->b = 1.0;
+    sphere->material = mat;
+
+    scene.children.push_back(sphere);
+
+    //intersection material, point and normal
+    Material *material;
     Vec pt;
     Vec n;
 
@@ -83,17 +101,10 @@ int main(int argc, char **argv)
             r.direction.y = -((double)y/height - 0.5); 
             r.direction.z = 1.0;
 
-            if (scene.intersect(r, pt, n)) {
- 
-                //Phong shading
-                double c = n.dot(light);
-                if (c < 0.0) c = 0.0; 
-                c = pow(c, 4);
-                c += 0.1; 
-                if (c > 1.0) c = 1.0;
-
-                i.set(x, y, 0.0, 0.0, c); 
-
+            if (scene.intersect(r, pt, n, material)) { 
+                double r, g, b;
+                material->shade(scene, pt, n, r, g, b); 
+                i.set(x, y, r, g, b); 
             } else { 
                 //dopey background
                 i.set(x, y, (double)y/1024.0, (double)y/1024.0, (double)y/1024.0);

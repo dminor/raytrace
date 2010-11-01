@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include <limits>
 
 #include "intersectable.h" 
+#include "sphere.h"
 
 #include <fstream> 
 #include <vector>
@@ -93,8 +94,8 @@ struct TriangleMesh : public Intersectable {
 
     }
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm)
-    {
+    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
+    { 
         bool hit = false;
         double closest_distance = std::numeric_limits<double>::max(); 
 
@@ -111,12 +112,12 @@ struct TriangleMesh : public Intersectable {
                         closest_distance = distance; 
                         pt = temp_pt;
                         norm = temp_norm;
+                        mat = material;
                     }
                 }
             }
         }
-
-        if (hit) norm.normalize();
+        if (hit) norm.normalize(); 
         return hit;
     }
 

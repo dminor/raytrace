@@ -20,37 +20,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef PLANE_H_
-#define PLANE_H_
+#ifndef LIGHT_H_
+#define LIGHT_H_
 
-#include <cmath>
+struct Light {
 
-#include "intersectable.h"
-#include "vec.h"
+    double r, g, b;
+    Vec direction;
 
-struct Plane : public Intersectable {
-
-    Vec p;
-    Vec normal;
-
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
-    {
-        double n = (p - ray.origin).dot(normal);
-        double d = ray.direction.dot(normal);
-
-        //check for near-zero values -- either parallel or in same plane
-        if (fabs(d) < INTERSECTION_EPSILON) return false;
-
-        //calculate hit 
-        double t = n/d; 
-        if (t < 0.0) return false; //behind ray origin
-
-        pt = ray.origin + ray.direction*t;
-        norm = normal;
-        mat = material;
-        return true;
-    }
+    Light() : r(1.0), g(1.0), b(1.0) {};
+    virtual ~Light() {};
 
 };
 
 #endif
+
+

@@ -20,37 +20,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef PLANE_H_
-#define PLANE_H_
+#ifndef LAMBERTIAN_MATERIAL_H_
+#define LAMBERTIAN_MATERIAL_H_
 
-#include <cmath>
-
-#include "intersectable.h"
+#include "material.h"
+#include "ray.h"
+#include "scene.h"
 #include "vec.h"
 
-struct Plane : public Intersectable {
+struct LambertianMaterial : public Material {
 
-    Vec p;
-    Vec normal;
+    double r, g, b;
+    double exp;
+ 
+    LambertianMaterial() : r(1.0), g(1.0), b(1.0), exp(1.0) {};
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
+    virtual ~LambertianMaterial() {};
+
+    void shade(const Scene &scene, const Vec &pt, const Vec &norm, double &r, double &g, double &b)
     {
-        double n = (p - ray.origin).dot(normal);
-        double d = ray.direction.dot(normal);
+        Light *light;
 
-        //check for near-zero values -- either parallel or in same plane
-        if (fabs(d) < INTERSECTION_EPSILON) return false;
+        //assume one light per scene for now 
+        for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
+            light = *itor;
+        } 
 
-        //calculate hit 
-        double t = n/d; 
-        if (t < 0.0) return false; //behind ray origin
+        //Phong shading
+        double c = norm.dot(light->direction);
+        if (c < 0.0) c = 0.0; 
+        if (c > 1.0) c = 1.0;
+        c = pow(c, exp);
 
-        pt = ray.origin + ray.direction*t;
-        norm = normal;
-        mat = material;
-        return true;
+        r = light->r*this->r*c;
+        g = light->g*this->g*c;
+        b = light->b*this->b*c; 
     }
-
 };
 
 #endif
+
+

@@ -20,37 +20,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef PLANE_H_
-#define PLANE_H_
+#ifndef GROUP_H_
+#define GROUP_H_
 
-#include <cmath>
+#include <limits>
+#include <vector>
 
 #include "intersectable.h"
-#include "vec.h"
 
-struct Plane : public Intersectable {
+struct Group : public Intersectable {
 
-    Vec p;
-    Vec normal;
+    std::vector<Intersectable *> children;
+
+    virtual ~Group() {
+        for (std::vector<Intersectable *>::iterator itor = children.begin(); itor != children.end(); ++itor) {
+            delete *itor; 
+        } 
+    };
 
     virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
     {
-        double n = (p - ray.origin).dot(normal);
-        double d = ray.direction.dot(normal);
+        bool hit = false;
+        double closest_distance = std::numeric_limits<double>::max(); 
+        for (std::vector<Intersectable *>::iterator itor = children.begin(); itor != children.end(); ++itor) {
+            Vec temp_pt;
+            Vec temp_norm;
+            Material *temp_mat;
+            if ((*itor)->intersect(ray, temp_pt, temp_norm, temp_mat)) { 
+                hit = true;
+                Vec dist_vec = temp_pt - ray.origin;
+                double distance = dist_vec.dot(dist_vec);
+                if (distance < closest_distance) {
+                    closest_distance = distance; 
+                    pt = temp_pt;
+                    norm = temp_norm;
+                    mat = temp_mat; 
+                }
+            }
+        } 
 
-        //check for near-zero values -- either parallel or in same plane
-        if (fabs(d) < INTERSECTION_EPSILON) return false;
-
-        //calculate hit 
-        double t = n/d; 
-        if (t < 0.0) return false; //behind ray origin
-
-        pt = ray.origin + ray.direction*t;
-        norm = normal;
-        mat = material;
-        return true;
+        return hit;
     }
-
 };
 
 #endif
+
+

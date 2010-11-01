@@ -20,36 +20,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef PLANE_H_
-#define PLANE_H_
+#ifndef SCENE_H_
+#define SCENE_H_
 
-#include <cmath>
+#include "group.h"
+#include "light.h"
 
-#include "intersectable.h"
-#include "vec.h"
+struct Scene : public Group {
 
-struct Plane : public Intersectable {
+    std::vector<Light *> lights;
 
-    Vec p;
-    Vec normal;
+    virtual ~Scene();
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
-    {
-        double n = (p - ray.origin).dot(normal);
-        double d = ray.direction.dot(normal);
-
-        //check for near-zero values -- either parallel or in same plane
-        if (fabs(d) < INTERSECTION_EPSILON) return false;
-
-        //calculate hit 
-        double t = n/d; 
-        if (t < 0.0) return false; //behind ray origin
-
-        pt = ray.origin + ray.direction*t;
-        norm = normal;
-        mat = material;
-        return true;
-    }
+    bool open(const char *filename);
 
 };
 

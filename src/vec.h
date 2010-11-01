@@ -23,6 +23,8 @@ THE SOFTWARE.
 #ifndef VEC_H_
 #define VEC_H_
 
+#include <cmath>
+
 struct Vec {
 
     double x, y, z;
