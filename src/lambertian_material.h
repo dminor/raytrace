@@ -31,9 +31,8 @@ THE SOFTWARE.
 struct LambertianMaterial : public Material {
 
     double r, g, b;
-    double exp;
  
-    LambertianMaterial() : r(1.0), g(1.0), b(1.0), exp(1.0) {};
+    LambertianMaterial() : r(1.0), g(1.0), b(1.0) {};
 
     virtual ~LambertianMaterial() {};
 
@@ -46,11 +45,9 @@ struct LambertianMaterial : public Material {
             light = *itor;
         } 
 
-        //Phong shading
         double c = norm.dot(light->direction);
-        if (c < 0.0) c = 0.0; 
+        if (c < 0.0) c = 0.0;
         if (c > 1.0) c = 1.0;
-        c = pow(c, exp);
 
         r = light->r*this->r*c;
         g = light->g*this->g*c;

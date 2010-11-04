@@ -1,6 +1,6 @@
 
-INCS = -I../../include 
-LIBS = -lpng 
+INCS = -I../../include -I/usr/include/lua5.1
+LIBS = -lpng -llua5.1
 CFLAGS = -g
 LDFLAGS = 
 OBJS = raytrace.o image.o scene.o
