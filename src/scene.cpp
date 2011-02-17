@@ -10,6 +10,7 @@ extern "C" {
 #include "lambertian_material.h"
 #include "material.h"
 #include "plane.h"
+#include "point_light.h"
 #include "quat.h"
 #include "scene.h"
 #include "sphere.h"
@@ -80,18 +81,18 @@ static int lambertian(lua_State *ls)
     return 1;
 }
 
-static int light(lua_State *ls)
+static int pointlight(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) { 
-        luaL_error(ls, "light: expected table");
+        luaL_error(ls, "pointlight: expected table");
     }
 
-    lua_getfield(ls, -1, "direction");
+    lua_getfield(ls, -1, "location");
     double x, y, z;
     get_xyz(ls, x, y, z);    
 
-    Light *light = new Light;
-    light->direction.x = x; light->direction.y = y; light->direction.z = z;
+    PointLight *light = new PointLight;
+    light->location.x = x; light->location.y = y; light->location.z = z;
     lua_pushlightuserdata(ls, light);
 
     return 1;
@@ -270,7 +271,7 @@ static int trimesh(lua_State *ls)
 luaL_Reg fns[] = {
     {"group", group},
     {"lambertian", lambertian},
-    {"light", light},
+    {"pointlight", pointlight},
     {"plane", plane},
     {"quat", quat},
     {"scene", scene},

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2011 Daniel Minor 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef LIGHT_H_
-#define LIGHT_H_
+#ifndef POINT_LIGHT_H_
+#define POINT_LIGHT_H_
 
-struct Light {
+struct PointLight {
 
     double r, g, b; 
+    Vec location; 
 
-    Light() : r(1.0), g(1.0), b(1.0) {};
-    virtual ~Light() {};
+    PointLight() : r(1.0), g(1.0), b(1.0) {};
+    virtual ~PointLight() {};
 
-    virtual Vec direction_to(const Vec &pt) = 0;
+    virtual Vec direction_to(const Vec &pt)
+    {
+        Vec d = location - pt;
+        d.normalize();
+
+        return d;
+    }
 
 };
 

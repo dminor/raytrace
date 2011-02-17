@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 
     //eyepoint
     Ray r;
-    r.origin.x = 0.0; r.origin.y = 0.0; r.origin.z = -15.0;
+    r.origin.x = 0.0; r.origin.y = 5.0; r.origin.z = -25.0;
 
     //scene
     Scene scene;
