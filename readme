@@ -1,1 +1,14 @@
-A simple photon mapping based ray trace developed to support experiments with nearest-neighbour algorithms.
+A simple photon mapping based ray tracer developed to support experiments with nearest-neighbour algorithms.
+
+Features:
+* Lua scene and view definitions.
+* Sphere, plane and triangle mesh primitives.
+* Point light sources.
+
+Planned features:
+* Rectangular and spherical light sources.
+* Shadows.
+* Photon mapping.
+
+Maybe someday:
+* Textures

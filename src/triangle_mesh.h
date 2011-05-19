@@ -80,6 +80,7 @@ struct TriangleMesh : public Intersectable {
                 Vec ab = vertices[face.j] - vertices[face.i];
                 Vec ac = vertices[face.k] - vertices[face.i];
                 face.normal = ab.cross(ac);
+
                 faces.push_back(face); 
 
             } else {

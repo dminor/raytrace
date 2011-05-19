@@ -25,43 +25,53 @@ THE SOFTWARE.
 #include "image.h" 
 #include "scene.h"
 #include "vec.h"
-
-const int height = 128;//512;
-const int width = 128;//512;
+#include "view.h"
 
 int main(int argc, char **argv)
 { 
 
-    if (argc != 2) {
-        std::cout << "usage: raytrace <filename>" << std::endl;
+    if (argc != 3) {
+        std::cout << "usage: raytrace <view> <scene>" << std::endl;
         return 1;
+    }
+
+    //view
+    View view;
+    if (!view.open(argv[1])) {
+        std::cout << "error: could not open view: " << argv[1] << std::endl;
+        return 1; 
+    }
+
+    //scene
+    Scene scene;
+    if (!scene.open(argv[2])) {
+        std::cout << "error: could not open scene: " << argv[2] << std::endl;
+        return 1; 
     }
 
     //eyepoint
     Ray r;
-    r.origin.x = 0.0; r.origin.y = 5.0; r.origin.z = -25.0;
-
-    //scene
-    Scene scene;
-    if (!scene.open(argv[1])) {
-        std::cout << "error: could not open scene: " << argv[1] << std::endl;
-        return 1; 
-    }
+    r.origin = view.pos; 
 
     //intersection material, point and normal
     Material *material;
     Vec pt;
     Vec n;
 
+    Vec view_right = view.dir.cross(view.up);
+
     //create image and trace a ray for each pixel
-    Image i(width, height);
-    for (size_t x = 0; x < width; ++x) {
-        for (size_t y = 0; y < height; ++y) { 
+    Image i(view.width, view.height);
+    for (int x = 0; x < view.width; ++x) {
+        for (int y = 0; y < view.height; ++y) { 
 
             //calculate ray direction vector
-            r.direction.x = (double)x/width - 0.5;
-            r.direction.y = -((double)y/height - 0.5); 
-            r.direction.z = 1.0;
+            //negate y to correct for (0, 0) being top left rather than
+            //bottom left
+            double us = view.u0 + (view.u1 - view.u0)*(x + 0.5)/view.width;
+            double vs = view.v0 + (view.v1 - view.v0)*(y + 0.5)/view.height;
+            r.direction = view_right*us - view.up*vs + view.dir;
+            r.direction.normalize();
 
             if (scene.intersect(r, pt, n, material)) { 
                 double r, g, b;

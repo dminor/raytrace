@@ -5,7 +5,7 @@ extern "C" {
     #include <lualib.h>
 }
 
-#include <iostream>
+#include <cstdio>
 
 #include "lambertian_material.h"
 #include "material.h"
@@ -17,21 +17,7 @@ extern "C" {
 #include "transform.h"
 #include "triangle_mesh.h"
 
-// helper function to get x, y and z values from table at top of stack    
-void get_xyz(lua_State *ls, double &x, double &y, double &z)
-{
-    lua_getfield(ls, -1, "x");
-    x = luaL_checknumber(ls, -1); 
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "y");
-    y = luaL_checknumber(ls, -1); 
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "z");
-    z = luaL_checknumber(ls, -1); 
-    lua_pop(ls, 1);
-}
+#include "lua_functions.h"
 
 static int group(lua_State *ls)
 {
@@ -268,7 +254,7 @@ static int trimesh(lua_State *ls)
     return 1;
 }
 
-luaL_Reg fns[] = {
+static luaL_Reg fns[] = {
     {"group", group},
     {"lambertian", lambertian},
     {"pointlight", pointlight},
@@ -308,7 +294,7 @@ bool Scene::open(const char *filename)
     //attempt to run scene definition file
     if (luaL_dofile(ls, filename)) {
         const char *err = lua_tostring(ls, -1);
-        if (err) std::cerr << err << std::endl;
+        if (err) fprintf(stderr, "%s\n", err);
         result = false;
     }
 
