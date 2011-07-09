@@ -79,6 +79,11 @@ static int image(lua_State *ls)
     view->height = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
+    lua_getfield(ls, -1, "samples");
+    view->samples = luaL_checknumber(ls, -1);
+    if (view->samples < 1) view->samples = 1;
+    lua_pop(ls, 1);
+
     return 0;
 }
 

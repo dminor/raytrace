@@ -20,33 +20,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef VIEW_H_
-#define VIEW_H_
+#ifndef RECTANGULAR_LIGHT_H_
+#define RECTANGULAR_LIGHT_H_
 
-#include "group.h"
-#include "light.h"
+#include <cstdlib>
 
-struct View {
+struct RectangularLight {
 
-    //rendered image height and width
-    int height, width;
+    double r, g, b; 
+    Vec pt1; 
+    Vec pt2; 
 
-    //samples per pixel
-    int samples;
+    RectangularLight() : r(1.0), g(1.0), b(1.0) {};
+    virtual ~RectangularLight() {};
+
+    virtual Vec point_on()
+    {
+        //FIXME: only works for axis aligned sources for now
+        double x = pt1.x + (pt2.x - pt1.x)*((double)(rand())/(double)RAND_MAX);
+        double y = pt1.y + (pt2.y - pt1.y)*((double)(rand())/(double)RAND_MAX);
+        double z = pt1.z + (pt2.z - pt1.z)*((double)(rand())/(double)RAND_MAX);
     
-    //eyepoint parameters
-    Vec pos, dir, up;
-
-    //view surface coordinates
-    double u0, v0, u1, v1;
-
-    //distance from eyepoint to view surface
-    double view_dist;
-
-    virtual ~View();
-
-    bool open(const char *filename);
+        return Vec(x, y, z);
+    }
 
 };
 
 #endif
+
+

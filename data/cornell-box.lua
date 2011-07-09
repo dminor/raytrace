@@ -1,8 +1,9 @@
 
 scene { 
     lights={
-        pointlight{
-            location={x=0.0, y=9.9, z=-5.0},
+        rectangularlight{
+            pt1={x=-0.4, y=9.9, z=-4.6},
+            pt2={x=0.4, y=9.9, z=-5.4},
         },
     }, 
     children={

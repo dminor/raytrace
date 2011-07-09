@@ -8,6 +8,7 @@ eyepoint {
 image { 
     height=128,
     width=128,
+    samples=1
 }
 
 surface {

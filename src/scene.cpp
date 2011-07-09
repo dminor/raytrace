@@ -12,6 +12,7 @@ extern "C" {
 #include "plane.h"
 #include "point_light.h"
 #include "quat.h"
+#include "rectangular_light.h"
 #include "scene.h"
 #include "sphere.h"
 #include "transform.h"
@@ -133,6 +134,29 @@ static int quat(lua_State *ls)
     return 1;
 }
 
+static int rectangularlight(lua_State *ls)
+{
+    if (!lua_istable(ls, -1)) { 
+        luaL_error(ls, "pointlight: expected table");
+    }
+
+    lua_getfield(ls, -1, "pt1");
+    double x1, y1, z1;
+    get_xyz(ls, x1, y1, z1);    
+    lua_pop(ls, 1);
+
+    lua_getfield(ls, -1, "pt2");
+    double x2, y2, z2;
+    get_xyz(ls, x2, y2, z2);    
+    lua_pop(ls, 1);
+
+    RectangularLight *light = new RectangularLight;
+    light->pt1.x = x1; light->pt1.y = y1; light->pt1.z = z1;
+    light->pt2.x = x2; light->pt2.y = y2; light->pt2.z = z2;
+    lua_pushlightuserdata(ls, light);
+
+    return 1;
+}
 static int scene(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) { 
@@ -260,6 +284,7 @@ static luaL_Reg fns[] = {
     {"pointlight", pointlight},
     {"plane", plane},
     {"quat", quat},
+    {"rectangularlight", rectangularlight},
     {"scene", scene},
     {"sphere", sphere},
     {"transform", transform},
