@@ -105,7 +105,7 @@ struct TriangleMesh : public Intersectable {
             for (std::vector<Face>::iterator itor = faces.begin(); itor != faces.end(); ++itor) {
                 Vec temp_pt;
                 Vec temp_norm;
-                if (intersect_face(ray, *itor, temp_pt, temp_norm)) {
+                if (intersect_face(ray, tmin, tmax, *itor, temp_pt, temp_norm)) {
                     hit = true;
 
                     Vec dist_vec = temp_pt - ray.origin;
@@ -125,7 +125,8 @@ struct TriangleMesh : public Intersectable {
 
     // From Ericson, C. (2005) Real-Time Collision Detection, Morgan Kauffman,
     // San Francisco, CA, pp. 190 - 192
-    virtual bool intersect_face(const Ray &ray, const Face &f, Vec &pt, Vec &norm)
+    virtual bool intersect_face(const Ray &ray, double tmin, double tmax,
+        const Face &f, Vec &pt, Vec &norm)
     { 
         Vec &a = vertices[f.i];
         Vec &b = vertices[f.j];
@@ -161,8 +162,8 @@ struct TriangleMesh : public Intersectable {
         pt = a + ac*v + ab*w;
         norm = f.normal;
 
-        double d = (pt - ray.origin).magnitude();
-        if (d < tmin || d > tmax) return false;
+        double dist = (pt - ray.origin).magnitude();
+        if (dist < tmin || dist > tmax) return false;
 
         return true; 
    } 
