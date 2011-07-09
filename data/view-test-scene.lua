@@ -6,8 +6,8 @@ eyepoint {
 }
 
 image { 
-    height=64,
-    width=64,
+    height=128,
+    width=128,
 }
 
 surface {

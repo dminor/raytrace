@@ -32,15 +32,20 @@ struct Sphere : public Intersectable {
     Vec centre;
     double radius;
 
-    bool intersect(const Ray &ray, Vec &pt, Vec &norm)
+    bool intersect(const Ray &ray, double tmin, double tmax,
+        Vec &pt, Vec &norm)
     {
         Vec e_minus_c = ray.origin - centre;
         double d_dot_d = ray.direction.dot(ray.direction);
         double d_dot_e_minus_c = ray.direction.dot(e_minus_c);
-        double disc = d_dot_e_minus_c*d_dot_e_minus_c - d_dot_d*(e_minus_c.dot(e_minus_c) - radius*radius);
+        double disc = d_dot_e_minus_c*d_dot_e_minus_c
+            - d_dot_d*(e_minus_c.dot(e_minus_c) - radius*radius);
 
         if (disc > 0.0) { 
             double t = -(ray.direction.dot(e_minus_c) + sqrt(disc))/d_dot_d;
+
+            if (t < tmin || t > tmax) return false;
+
             pt = ray.origin + (ray.direction*t);
             norm = (pt - centre) * (1.0/radius);
             return true;
@@ -49,10 +54,10 @@ struct Sphere : public Intersectable {
         } 
     }
  
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
+    virtual bool intersect(const Ray &ray, double tmin, double tmax, Vec &pt, Vec &norm, Material *&mat)
     {
         mat = material;
-        return intersect(ray, pt, norm);
+        return intersect(ray, tmin, tmax, pt, norm);
     }
 };
 

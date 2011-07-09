@@ -45,7 +45,9 @@ struct LambertianMaterial : public Material {
             light = *itor;
         } 
 
-        double c = norm.dot(light->direction_to(pt));
+        Vec direction_to = light->point_on() - pt;
+        direction_to.normalize(); 
+        double c = norm.dot(direction_to);
         if (c < 0.0) c = 0.0;
         if (c > 1.0) c = 1.0;
 

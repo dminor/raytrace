@@ -21,6 +21,7 @@ THE SOFTWARE.
 */
 
 #include <iostream>
+#include <limits>
 
 #include "image.h" 
 #include "scene.h"
@@ -73,10 +74,33 @@ int main(int argc, char **argv)
             r.direction = view_right*us - view.up*vs + view.dir;
             r.direction.normalize();
 
-            if (scene.intersect(r, pt, n, material)) { 
-                double r, g, b;
-                material->shade(scene, pt, n, r, g, b); 
-                i.set(x, y, r, g, b); 
+            if (scene.intersect(r, 0.0, std::numeric_limits<double>::max(),
+                    pt, n, material)) { 
+                Light *light;
+
+                //assume one light per scene for now 
+                for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
+                    light = *itor;
+                } 
+
+                //shadow
+                Ray shadow_r;
+                shadow_r.origin = pt;
+                shadow_r.direction = light->point_on() - pt;
+                double tmax = shadow_r.direction.magnitude();
+                shadow_r.direction.normalize();
+
+                //dummy values
+                Vec d;
+                Material *d_mat;
+
+                if (!scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) { 
+                    double r, g, b;
+                    material->shade(scene, pt, n, r, g, b); 
+                    i.set(x, y, r, g, b);
+                } else {
+                    i.set(x, y, 0, 0, 0); 
+                } 
             } else { 
                 //dopey background
                 i.set(x, y, (double)y/1024.0, (double)y/1024.0, (double)y/1024.0);

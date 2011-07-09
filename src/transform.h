@@ -38,13 +38,14 @@ struct Transform : public Intersectable {
 
     virtual ~Transform() {};
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
+    virtual bool intersect(const Ray &ray, double tmin, double tmax,
+        Vec &pt, Vec &norm, Material *&mat)
     {
         Ray r;
         Quat conj_rotation = rotation.conjugate(); 
         r.origin = (conj_rotation*(ray.origin - translation)*rotation).v;
         r.direction = (conj_rotation*ray.direction*rotation).v; 
-        return child->intersect(r, pt, norm, mat); 
+        return child->intersect(r, tmin, tmax, pt, norm, mat); 
     }
 };
 

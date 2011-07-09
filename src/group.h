@@ -38,7 +38,8 @@ struct Group : public Intersectable {
         } 
     };
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
+    virtual bool intersect(const Ray &ray, double tmin, double tmax,
+        Vec &pt, Vec &norm, Material *&mat)
     {
         bool hit = false;
         double closest_distance = std::numeric_limits<double>::max(); 
@@ -46,7 +47,7 @@ struct Group : public Intersectable {
             Vec temp_pt;
             Vec temp_norm;
             Material *temp_mat;
-            if ((*itor)->intersect(ray, temp_pt, temp_norm, temp_mat)) { 
+            if ((*itor)->intersect(ray, tmin, tmax, temp_pt, temp_norm, temp_mat)) { 
                 hit = true;
                 Vec dist_vec = temp_pt - ray.origin;
                 double distance = dist_vec.dot(dist_vec);

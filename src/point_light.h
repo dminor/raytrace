@@ -31,12 +31,9 @@ struct PointLight {
     PointLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~PointLight() {};
 
-    virtual Vec direction_to(const Vec &pt)
+    virtual Vec point_on()
     {
-        Vec d = location - pt;
-        d.normalize();
-
-        return d;
+        return location;
     }
 
 };

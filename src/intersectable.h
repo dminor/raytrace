@@ -39,7 +39,8 @@ struct Intersectable {
         if (material) delete material;
     } 
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat) = 0;
+    virtual bool intersect(const Ray &ray, double tmin, double tmax,
+        Vec &pt, Vec &norm, Material *&mat) = 0;
 };
 
 #endif

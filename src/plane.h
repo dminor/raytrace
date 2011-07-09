@@ -33,7 +33,8 @@ struct Plane : public Intersectable {
     Vec p;
     Vec normal;
 
-    virtual bool intersect(const Ray &ray, Vec &pt, Vec &norm, Material *&mat)
+    virtual bool intersect(const Ray &ray, double tmin, double tmax,
+        Vec &pt, Vec &norm, Material *&mat)
     {
         double n = (p - ray.origin).dot(normal);
         double d = ray.direction.dot(normal);
@@ -43,7 +44,7 @@ struct Plane : public Intersectable {
 
         //calculate hit 
         double t = n/d; 
-        if (t < 0.0) return false; //behind ray origin
+        if (t < tmin || t > tmax) return false;
 
         pt = ray.origin + ray.direction*t;
         norm = normal;
