@@ -51,8 +51,8 @@ int main(int argc, char **argv)
     }
 
     //eyepoint
-    Ray r;
-    r.origin = view.pos; 
+    Ray ray;
+    ray.origin = view.pos; 
 
     //intersection material, point and normal
     Material *material;
@@ -77,38 +77,17 @@ int main(int argc, char **argv)
 
                 //negate y to correct for (0, 0) being top left rather than
                 //bottom left
-                r.direction = view_right*us - view.up*vs + view.dir;
-                r.direction.normalize();
+                ray.direction = view_right*us - view.up*vs + view.dir;
+                ray.direction.normalize();
 
-                if (scene.intersect(r, 0.0, std::numeric_limits<double>::max(),
-                        pt, n, material)) { 
-                    Light *light;
+                if (scene.intersect(ray, 0.0,
+                    std::numeric_limits<double>::max(), pt, n, material)) { 
 
-                    //assume one light per scene for now 
-                    for (std::vector<Light *>::const_iterator itor =
-                            scene.lights.begin(); itor != scene.lights.end();
-                            ++itor) {
-                        light = *itor;
-                    } 
-
-                    //shadow
-                    Ray shadow_r;
-                    shadow_r.origin = pt;
-                    shadow_r.direction = light->point_on() - pt;
-                    double tmax = shadow_r.direction.magnitude();
-                    shadow_r.direction.normalize();
-
-                    //dummy values
-                    Vec d;
-                    Material *d_mat;
-
-                    if (!scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) { 
-                        double r, g, b;
-                        material->shade(scene, pt, n, r, g, b); 
-                        R += r / (double)view.samples;
-                        G += g / (double)view.samples;
-                        B += b / (double)view.samples;
-                    }
+                    double r, g, b;
+                    material->shade(scene, ray, pt, n, r, g, b); 
+                    R += r / (double)view.samples;
+                    G += g / (double)view.samples;
+                    B += b / (double)view.samples;
                 }
             }
 

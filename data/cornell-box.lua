@@ -38,12 +38,12 @@ scene {
             material=lambertian{r=1.0, g=1.0, b=1.0}
         },
         sphere{
-            centre={x=-1.5, y=2.0, z=-5.0},
+            centre={x=-2.75, y=2.0, z=-5.25},
             radius=1.5,
-            material=lambertian{r=0.0, g=1.0, b=0.0}
+            material=specular{}
         }, 
         sphere{
-            centre={x=2.0, y=2.0, z=-4.0},
+            centre={x=2.0, y=2.0, z=-4.5},
             radius=1.5,
             material=lambertian{r=0.0, g=0.0, b=1.0}
         }, 

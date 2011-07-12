@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2011 Daniel Minor 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,27 +20,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef INTERSECTABLE_H_
-#define INTERSECTABLE_H_
+#ifndef SPECULAR_MATERIAL_H_
+#define SPECULAR_MATERIAL_H_
 
 #include "material.h"
 #include "ray.h"
+#include "scene.h"
 #include "vec.h"
 
-const double INTERSECTION_EPSILON = 0.00001;
+struct SpecularMaterial : public Material {
+ 
+    SpecularMaterial() {};
 
-struct Intersectable {
+    virtual ~SpecularMaterial() {};
 
-    Material *material;
+    void shade(const Scene &scene, const Ray &incident, const Vec &pt,
+        const Vec &norm, double &r, double &g, double &b)
+    {
 
-    Intersectable() : material(0) {};
+        //reflection
+        Ray ray;
+        ray.origin = pt;
+        ray.direction = incident.direction - norm*incident.direction.dot(norm)*2.0;
 
-    virtual ~Intersectable() {
-        if (material) delete material;
-    } 
+        //printf("incident: %.3f %.3f %.3f\n", incident.direction.x, incident.direction.y, incident.direction.z);
+        //printf("reflected: %.3f %.3f %.3f\n", ray.direction.x, ray.direction.y, ray.direction.z);
+        double tmax = std::numeric_limits<double>::max(); 
 
-    virtual bool intersect(const Ray &ray, double tmin, double tmax,
-        Vec &pt, Vec &norm, Material *&mat) const = 0;
+        Material *material;
+        Vec pt2;
+        Vec norm2;
+
+        //emit ray
+        if (scene.intersect(ray, 0.1, tmax, pt2, norm2, material)) { 
+            material->shade(scene, ray, pt2, norm2, r, g, b); 
+        } else { 
+            r = g = b = 0.0;
+        }
+    }
 };
 
 #endif

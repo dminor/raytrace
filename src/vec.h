@@ -93,7 +93,7 @@ struct Vec {
         return x*other.x + y*other.y + z*other.z;
     }
 
-    double magnitude()
+    double magnitude() const
     {
         return sqrt(dot(*this)); 
     }
@@ -101,7 +101,7 @@ struct Vec {
     void normalize()
     {
         double norm = sqrt(dot(*this));
-        if (norm > 0.0) {
+        if (norm != 0.0) {
             x/=norm;
             y/=norm;
             z/=norm;

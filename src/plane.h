@@ -34,7 +34,7 @@ struct Plane : public Intersectable {
     Vec normal;
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
-        Vec &pt, Vec &norm, Material *&mat)
+        Vec &pt, Vec &norm, Material *&mat) const
     {
         double n = (p - ray.origin).dot(normal);
         double d = ray.direction.dot(normal);

@@ -39,11 +39,11 @@ struct Group : public Intersectable {
     };
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
-        Vec &pt, Vec &norm, Material *&mat)
+        Vec &pt, Vec &norm, Material *&mat) const
     {
         bool hit = false;
         double closest_distance = std::numeric_limits<double>::max(); 
-        for (std::vector<Intersectable *>::iterator itor = children.begin(); itor != children.end(); ++itor) {
+        for (std::vector<Intersectable *>::const_iterator itor = children.begin(); itor != children.end(); ++itor) {
             Vec temp_pt;
             Vec temp_norm;
             Material *temp_mat;

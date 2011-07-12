@@ -36,7 +36,8 @@ struct LambertianMaterial : public Material {
 
     virtual ~LambertianMaterial() {};
 
-    void shade(const Scene &scene, const Vec &pt, const Vec &norm, double &r, double &g, double &b)
+    void shade(const Scene &scene, const Ray &incident, const Vec &pt,
+        const Vec &norm, double &r, double &g, double &b)
     {
         Light *light;
 
@@ -46,14 +47,31 @@ struct LambertianMaterial : public Material {
         } 
 
         Vec direction_to = light->point_on() - pt;
-        direction_to.normalize(); 
-        double c = norm.dot(direction_to);
-        if (c < 0.0) c = 0.0;
-        if (c > 1.0) c = 1.0;
 
-        r = light->r*this->r*c;
-        g = light->g*this->g*c;
-        b = light->b*this->b*c; 
+        //shadow
+        Ray shadow_r;
+        shadow_r.origin = pt;
+        shadow_r.direction = light->point_on() - pt;
+        double tmax = shadow_r.direction.magnitude();
+        shadow_r.direction.normalize();
+
+        //dummy values
+        Vec d;
+        Material *d_mat;
+
+        //emit shadow ray
+        if (scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) { 
+            r = g = b = 0.0;
+        } else { 
+            direction_to.normalize(); 
+            double c = norm.dot(shadow_r.direction);
+            if (c < 0.0) c = 0.0;
+            if (c > 1.0) c = 1.0;
+
+            r = light->r*this->r*c;
+            g = light->g*this->g*c;
+            b = light->b*this->b*c; 
+        }
     }
 };
 

@@ -15,10 +15,10 @@ all: $(OBJS)
 
 image.o: image.h
 
-scene.o: scene.h
+scene.o: scene.h lambertian_material.h specular_material.h
 
 raytrace.o: group.h intersectable.h plane.h quat.h ray.h sphere.h triangle_mesh.h vec.h \
-            lambertian_material.h light.h point_light.h
+            lambertian_material.h light.h point_light.h specular_material.h
 
 view.o: view.h
 

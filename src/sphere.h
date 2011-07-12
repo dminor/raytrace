@@ -33,7 +33,7 @@ struct Sphere : public Intersectable {
     double radius;
 
     bool intersect(const Ray &ray, double tmin, double tmax,
-        Vec &pt, Vec &norm)
+        Vec &pt, Vec &norm) const
     {
         Vec e_minus_c = ray.origin - centre;
         double d_dot_d = ray.direction.dot(ray.direction);
@@ -54,7 +54,7 @@ struct Sphere : public Intersectable {
         } 
     }
  
-    virtual bool intersect(const Ray &ray, double tmin, double tmax, Vec &pt, Vec &norm, Material *&mat)
+    virtual bool intersect(const Ray &ray, double tmin, double tmax, Vec &pt, Vec &norm, Material *&mat) const
     {
         mat = material;
         return intersect(ray, tmin, tmax, pt, norm);

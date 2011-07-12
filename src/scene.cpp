@@ -14,6 +14,7 @@ extern "C" {
 #include "quat.h"
 #include "rectangular_light.h"
 #include "scene.h"
+#include "specular_material.h"
 #include "sphere.h"
 #include "transform.h"
 #include "triangle_mesh.h"
@@ -189,6 +190,19 @@ static int scene(lua_State *ls)
     return 0;
 }
 
+static int specular(lua_State *ls)
+{
+    if (!lua_istable(ls, -1)) { 
+        luaL_error(ls, "specular: expected table");
+    }
+ 
+    SpecularMaterial *mat = new SpecularMaterial;
+    lua_pushlightuserdata(ls, mat);
+
+    return 1;
+}
+
+
 static int sphere(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) { 
@@ -286,6 +300,7 @@ static luaL_Reg fns[] = {
     {"quat", quat},
     {"rectangularlight", rectangularlight},
     {"scene", scene},
+    {"specular", specular},
     {"sphere", sphere},
     {"transform", transform},
     {"trimesh", trimesh},

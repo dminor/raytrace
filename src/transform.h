@@ -39,7 +39,7 @@ struct Transform : public Intersectable {
     virtual ~Transform() {};
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
-        Vec &pt, Vec &norm, Material *&mat)
+        Vec &pt, Vec &norm, Material *&mat) const
     {
         Ray r;
         Quat conj_rotation = rotation.conjugate(); 
