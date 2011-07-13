@@ -30,7 +30,7 @@ struct Light {
     Light() : r(1.0), g(1.0), b(1.0) {};
     virtual ~Light() {};
 
-    virtual Vec point_on() = 0;
+    virtual Vec random_point() = 0;
 
 };
 

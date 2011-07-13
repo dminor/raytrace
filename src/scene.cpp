@@ -75,11 +75,17 @@ static int pointlight(lua_State *ls)
         luaL_error(ls, "pointlight: expected table");
     }
 
+    lua_getfield(ls, -1, "radiance");
+    double r, g, b; 
+    get_rgb(ls, r, g, b);    
+    lua_pop(ls, 1);
+
     lua_getfield(ls, -1, "location");
     double x, y, z;
     get_xyz(ls, x, y, z);    
 
     PointLight *light = new PointLight;
+    light->r = r; light->g = g; light->b = b;
     light->location.x = x; light->location.y = y; light->location.z = z;
     lua_pushlightuserdata(ls, light);
 
@@ -138,8 +144,13 @@ static int quat(lua_State *ls)
 static int rectangularlight(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) { 
-        luaL_error(ls, "pointlight: expected table");
+        luaL_error(ls, "rectangularlight: expected table");
     }
+
+    lua_getfield(ls, -1, "radiance");
+    double r, g, b; 
+    get_rgb(ls, r, g, b);    
+    lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "pt1");
     double x1, y1, z1;
@@ -152,6 +163,7 @@ static int rectangularlight(lua_State *ls)
     lua_pop(ls, 1);
 
     RectangularLight *light = new RectangularLight;
+    light->r = r; light->g = g; light->b = b;
     light->pt1.x = x1; light->pt1.y = y1; light->pt1.z = z1;
     light->pt2.x = x2; light->pt2.y = y2; light->pt2.z = z2;
     lua_pushlightuserdata(ls, light);

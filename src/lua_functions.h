@@ -30,4 +30,7 @@ extern "C" {
 // helper function to get x, y and z values from table at top of stack    
 void get_xyz(lua_State *ls, double &x, double &y, double &z);
 
+// helper function to get r, g and b values from table at top of stack    
+void get_rgb(lua_State *ls, double &r, double &g, double &b);
+
 #endif

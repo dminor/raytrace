@@ -6,8 +6,8 @@ eyepoint {
 }
 
 image { 
-    height=128,
-    width=128,
+    height=256,
+    width=256,
     samples=1
 }
 

@@ -46,12 +46,10 @@ struct LambertianMaterial : public Material {
             light = *itor;
         } 
 
-        Vec direction_to = light->point_on() - pt;
-
         //shadow
         Ray shadow_r;
         shadow_r.origin = pt;
-        shadow_r.direction = light->point_on() - pt;
+        shadow_r.direction = light->random_point() - pt;
         double tmax = shadow_r.direction.magnitude();
         shadow_r.direction.normalize();
 
@@ -63,14 +61,15 @@ struct LambertianMaterial : public Material {
         if (scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) { 
             r = g = b = 0.0;
         } else { 
-            direction_to.normalize(); 
             double c = norm.dot(shadow_r.direction);
             if (c < 0.0) c = 0.0;
             if (c > 1.0) c = 1.0;
 
-            r = light->r*this->r*c;
-            g = light->g*this->g*c;
-            b = light->b*this->b*c; 
+            double attenuation = 1.0 / (tmax*tmax);
+
+            r = light->r*this->r*c*attenuation;
+            g = light->g*this->g*c*attenuation;
+            b = light->b*this->b*c*attenuation;
         }
     }
 };

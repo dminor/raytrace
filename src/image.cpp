@@ -25,6 +25,12 @@ THE SOFTWARE.
 #include <cstdio>
 #include <iostream>
 
+void clamp(double &v, double min, double max)
+{
+    if (v < min) v = min;
+    if (v > max) v = max;
+}
+
 Image::Image(size_t width, size_t height) : width(width), height(height)
 {
     rows = new png_bytep[height];
@@ -45,6 +51,10 @@ Image::~Image()
 void Image::set(size_t x, size_t y, double r, double g, double b)
 {
     if (x < width && y < height) {
+        clamp(r, 0.0, 1.0);
+        clamp(g, 0.0, 1.0);
+        clamp(b, 0.0, 1.0);
+
         rows[y][x*3] = (png_byte)(r * 255.0);
         rows[y][x*3 + 1] = (png_byte)(g * 255.0);
         rows[y][x*3 + 2] = (png_byte)(b * 255.0);

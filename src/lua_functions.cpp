@@ -44,4 +44,18 @@ void get_xyz(lua_State *ls, double &x, double &y, double &z)
     lua_pop(ls, 1);
 }
 
+// helper function to get r, g and b values from table at top of stack    
+void get_rgb(lua_State *ls, double &r, double &g, double &b)
+{
+    lua_getfield(ls, -1, "r");
+    r = luaL_checknumber(ls, -1); 
+    lua_pop(ls, 1);
 
+    lua_getfield(ls, -1, "g");
+    g = luaL_checknumber(ls, -1); 
+    lua_pop(ls, 1);
+
+    lua_getfield(ls, -1, "b");
+    b = luaL_checknumber(ls, -1); 
+    lua_pop(ls, 1);
+}

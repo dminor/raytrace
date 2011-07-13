@@ -34,7 +34,7 @@ struct RectangularLight {
     RectangularLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~RectangularLight() {};
 
-    virtual Vec point_on()
+    virtual Vec random_point()
     {
         //FIXME: only works for axis aligned sources for now
         double x = pt1.x + (pt2.x - pt1.x)*((double)(rand())/(double)RAND_MAX);

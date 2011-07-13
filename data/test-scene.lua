@@ -4,6 +4,7 @@
 scene {
     lights={
         pointlight{
+            radiance={r=100.0, g=100.0, b=100.0},
             location={x=0.0, y=10.0, z=-10.0},
         },
     }, 
