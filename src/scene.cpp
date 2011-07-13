@@ -7,6 +7,7 @@ extern "C" {
 
 #include <cstdio>
 
+#include "dielectric_material.h"
 #include "lambertian_material.h"
 #include "material.h"
 #include "plane.h"
@@ -21,6 +22,22 @@ extern "C" {
 
 #include "lua_functions.h"
 
+static int dielectric(lua_State *ls)
+{
+    if (!lua_istable(ls, -1)) { 
+        luaL_error(ls, "dielectric: expected table");
+    }
+ 
+    lua_getfield(ls, -1, "nt");
+    double nt = luaL_checknumber(ls, -1); 
+    lua_pop(ls, 1);
+
+    DielectricMaterial *mat = new DielectricMaterial;
+    mat->nt = nt;
+    lua_pushlightuserdata(ls, mat);
+
+    return 1;
+}
 static int group(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) { 
@@ -305,6 +322,7 @@ static int trimesh(lua_State *ls)
 }
 
 static luaL_Reg fns[] = {
+    {"dielectric", dielectric},
     {"group", group},
     {"lambertian", lambertian},
     {"pointlight", pointlight},

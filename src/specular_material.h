@@ -43,8 +43,6 @@ struct SpecularMaterial : public Material {
         ray.origin = pt;
         ray.direction = incident.direction - norm*incident.direction.dot(norm)*2.0;
 
-        //printf("incident: %.3f %.3f %.3f\n", incident.direction.x, incident.direction.y, incident.direction.z);
-        //printf("reflected: %.3f %.3f %.3f\n", ray.direction.x, ray.direction.y, ray.direction.z);
         double tmax = std::numeric_limits<double>::max(); 
 
         Material *material;
