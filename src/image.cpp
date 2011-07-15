@@ -23,7 +23,6 @@ THE SOFTWARE.
 #include "image.h"
 
 #include <cstdio>
-#include <iostream>
 
 void clamp(double &v, double min, double max)
 {
@@ -65,7 +64,7 @@ bool Image::save(const char *filename)
 {
     FILE *f = fopen(filename, "wb");
     if (!f) {
-        std::cout << "error: could not open: " << filename << "\n";
+        fprintf(stderr, "error: could not open: %s\n", filename);
         return false;
     }
     
@@ -76,7 +75,7 @@ bool Image::save(const char *filename)
     if (setjmp(png_jmpbuf(png))) {
         png_destroy_write_struct(&png, &info);
         fclose(f);
-        std::cout << "error: could not write png.\n";
+        fprintf(stderr, "error: could not write png.\n");
         return false;
     }
 
