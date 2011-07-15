@@ -30,9 +30,6 @@ struct View {
 
     //rendered image height and width
     int height, width;
-
-    //samples per pixel
-    int samples;
     
     //eyepoint parameters
     Vec pos, dir, up;

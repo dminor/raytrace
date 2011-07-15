@@ -31,23 +31,32 @@ THE SOFTWARE.
 int main(int argc, char **argv)
 { 
 
-    if (argc != 3) {
-        std::cout << "usage: raytrace <view> <scene>" << std::endl;
+    if (argc < 3) {
+        fprintf(stderr, "usage: raytrace <view> <scene> [--samples]\n");
         return 1;
     }
 
     //view
     View view;
     if (!view.open(argv[1])) {
-        std::cout << "error: could not open view: " << argv[1] << std::endl;
+        fprintf(stderr, "error: could not open view: %s\n",argv[1]);
         return 1; 
     }
 
     //scene
     Scene scene;
     if (!scene.open(argv[2])) {
-        std::cout << "error: could not open scene: " << argv[2] << std::endl;
+        fprintf(stderr, "error: could not open scene: %s\n",argv[2]);
         return 1; 
+    }
+
+    //look at other arguments
+    int samples = 1;
+
+    for (int i = 3; i < argc; ++i) {
+        if (sscanf(argv[i], "--samples=%d\n", &samples) == 1) { 
+            if (samples < 1) samples = 1;
+        }
     }
 
     //eyepoint
@@ -67,7 +76,7 @@ int main(int argc, char **argv)
         for (int y = 0; y < view.height; ++y) { 
             double R = 0.0, G = 0.0, B = 0.0;
 
-            for (int s = 0; s < view.samples; ++s) { 
+            for (int s = 0; s < samples; ++s) { 
                 //calculate ray direction vector
                 double us = view.u0 + (view.u1 - view.u0)*(x + 0.5)/view.width;
                 us += (double)rand()/(double)RAND_MAX/(double)view.width;
@@ -85,9 +94,9 @@ int main(int argc, char **argv)
 
                     double r, g, b;
                     material->shade(scene, ray, pt, n, r, g, b); 
-                    R += r / (double)view.samples;
-                    G += g / (double)view.samples;
-                    B += b / (double)view.samples;
+                    R += r / (double)samples;
+                    G += g / (double)samples;
+                    B += b / (double)samples;
                 }
             }
 

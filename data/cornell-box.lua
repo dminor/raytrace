@@ -46,7 +46,7 @@ scene {
         sphere{
             centre={x=2.0, y=2.0, z=-4.5},
             radius=1.5,
-            material=dielectric{nt=0.7}
+            material=dielectric{nt=1.2}
         }, 
     } 
 }
