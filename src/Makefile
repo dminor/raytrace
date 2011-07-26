@@ -1,9 +1,9 @@
 
-INCS = -I../../include -I/usr/include/lua5.1
+INCS = -I../../kdtree/include -I/usr/include/lua5.1
 LIBS = -lpng -llua5.1
 CFLAGS = -g
 LDFLAGS = 
-OBJS = lua_functions.o raytrace.o image.o scene.o view.o
+OBJS = lua_functions.o image.o photon_map.o scene.o raytrace.o view.o
 TARGET = ../bin/raytrace
 
 all: $(OBJS)
@@ -15,11 +15,13 @@ all: $(OBJS)
 
 image.o: image.h
 
-scene.o: scene.h lambertian_material.h specular_material.h
+photon_map.o: photon_map.h ray.h vec.h
 
-raytrace.o: group.h intersectable.h plane.h quat.h ray.h sphere.h\
-            triangle_mesh.h vec.h view.h lambertian_material.h light.h\
-            point_light.h specular_material.h
+scene.o: dielectric_material.h lambertian_material.h specular_material.h
+
+raytrace.o: dielectric_material.h group.h intersectable.h plane.h quat.h ray.h\
+            sphere.h triangle_mesh.h vec.h view.h lambertian_material.h\
+            light.h point_light.h specular_material.h
 
 view.o: view.h
 

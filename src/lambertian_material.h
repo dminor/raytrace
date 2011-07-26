@@ -36,40 +36,49 @@ struct LambertianMaterial : public Material {
 
     virtual ~LambertianMaterial() {};
 
+    virtual bool isLambertian()
+    {
+        return true;
+    }
+
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
         const Vec &norm, double &r, double &g, double &b)
     {
         Light *light;
 
-        //assume one light per scene for now 
-        for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
-            light = *itor;
-        } 
+        if (scene.use_photon_map) { 
+            scene.photon_map.query(pt, 50, 0.1, r, g, b);
+        } else {
+            //assume one light per scene for now 
+            for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
+                light = *itor;
+            } 
 
-        //shadow
-        Ray shadow_r;
-        shadow_r.origin = pt;
-        shadow_r.direction = light->random_point() - pt;
-        double tmax = shadow_r.direction.magnitude();
-        shadow_r.direction.normalize();
+            //shadow
+            Ray shadow_r;
+            shadow_r.origin = pt;
+            shadow_r.direction = light->random_point() - pt;
+            double tmax = shadow_r.direction.magnitude();
+            shadow_r.direction.normalize();
 
-        //dummy values
-        Vec d;
-        Material *d_mat;
+            //dummy values
+            Vec d;
+            Material *d_mat;
 
-        //emit shadow ray
-        if (scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) { 
-            r = g = b = 0.0;
-        } else { 
-            double c = norm.dot(shadow_r.direction);
-            if (c < 0.0) c = 0.0;
-            if (c > 1.0) c = 1.0;
+            //emit shadow ray
+            if (scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) { 
+                r = g = b = 0.0;
+            } else { 
+                double c = norm.dot(shadow_r.direction);
+                if (c < 0.0) c = 0.0;
+                if (c > 1.0) c = 1.0;
 
-            double attenuation = 1.0 / (tmax*tmax);
+                double attenuation = 1.0 / (tmax*tmax);
 
-            r = light->r*this->r*c*attenuation;
-            g = light->g*this->g*c*attenuation;
-            b = light->b*this->b*c*attenuation;
+                r = light->r*this->r*c*attenuation;
+                g = light->g*this->g*c*attenuation;
+                b = light->b*this->b*c*attenuation;
+            }
         }
     }
 };

@@ -2,9 +2,11 @@
 scene { 
     lights={
         rectangularlight{
-            radiance={r=20.0, g=20.0, b=20.0},
-            pt1={x=-0.4, y=9.9, z=-4.6},
-            pt2={x=0.4, y=9.9, z=-5.4},
+            radiance={r=5.0, g=5.0, b=5.0},
+            pt={x=0.0, y=9.9, z=-5.0},
+            normal={x=0.0, y=-1.0, z=0.0},
+            width=0.4,
+            height=0.4
         },
     }, 
     children={
@@ -46,7 +48,7 @@ scene {
         sphere{
             centre={x=2.0, y=2.0, z=-4.5},
             radius=1.5,
-            material=dielectric{nt=1.2}
+            material=dielectric{nt=1.5}
         }, 
     } 
 }

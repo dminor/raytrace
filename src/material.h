@@ -32,6 +32,11 @@ struct Material {
 
     virtual ~Material() {};
 
+    virtual bool isLambertian()
+    {
+        return false;
+    }
+
     virtual void shade(const Scene &scene, const Ray &incident,
         const Vec &pt, const Vec &norm,double &r, double &g, double &b) = 0;
 };

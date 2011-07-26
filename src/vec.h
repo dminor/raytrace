@@ -24,6 +24,9 @@ THE SOFTWARE.
 #define VEC_H_
 
 #include <cmath>
+#include <cstdlib>
+
+const int BASIS_EPS = 0.001;
 
 struct Vec {
 
@@ -40,6 +43,38 @@ struct Vec {
 
     virtual ~Vec()
     {
+    }
+
+    static Vec random_unit_vec()
+    {
+        Vec result;
+
+        do {
+            result.x = (double)rand()/(double)RAND_MAX;
+            result.y = (double)rand()/(double)RAND_MAX;
+            result.z = (double)rand()/(double)RAND_MAX;
+        } while(result.magnitude() > 1.0);
+
+        result.normalize();
+
+        return result;
+    }
+
+    static Vec random_cosine_vec()
+    {
+        Vec result;
+
+        double r1 = (double)rand()/(double)RAND_MAX;
+        double r2 = (double)rand()/(double)RAND_MAX;
+        double cos_theta = sqrt(1.0 - r1);
+        double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+        double phi = 2.0*3.14159265358979*r2;
+
+        result.x = cos(phi)*sin_theta;
+        result.y = sin(phi)*sin_theta;
+        result.z = cos_theta; 
+
+        return result;
     }
 
     Vec operator+(const Vec &other) const
@@ -67,6 +102,15 @@ struct Vec {
         result.x = -x;
         result.y = -y;
         result.z = -z;
+        return result; 
+    }
+
+    Vec operator*(const Vec &other) const
+    {
+        Vec result;
+        result.x = x*other.x;
+        result.y = y*other.y;
+        result.z = z*other.z;
         return result; 
     }
 
@@ -106,6 +150,19 @@ struct Vec {
             y/=norm;
             z/=norm;
         }
+    }
+
+    //construct non-unique orthonormal basis from this vector 
+    void construct_basis(Vec &u, Vec &v)
+    {
+        Vec n(1.0, 0.0, 0.0);
+        Vec m(0.0, 1.0, 0.0);
+        u = cross(n);
+        if (u.magnitude() < BASIS_EPS) {
+            u = cross(m);
+        }
+
+        v = cross(u);
     }
 };
 

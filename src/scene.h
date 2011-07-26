@@ -25,10 +25,14 @@ THE SOFTWARE.
 
 #include "group.h"
 #include "light.h"
+#include "photon_map.h"
 
 struct Scene : public Group {
 
     std::vector<Light *> lights;
+    PhotonMap photon_map;
+
+    bool use_photon_map;
 
     virtual ~Scene();
 

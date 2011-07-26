@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2011 Daniel Minor 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,58 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef LIGHT_H_
-#define LIGHT_H_
+#ifndef PHOTON_MAP_H_ 
+#define PHOTON_MAP_H_ 
 
-struct Light {
+#include "vec.h"
 
-    double r, g, b; 
+#include "kdtree.h"
 
-    Light() : r(1.0), g(1.0), b(1.0) {};
-    virtual ~Light() {};
+struct Scene;
 
-    virtual Ray emit() = 0;
-    virtual Vec random_point() = 0;
+class PhotonMap {
 
+    struct Photon {
+        Vec location;
+        double r, g, b;
+
+        Photon()
+        {
+        }
+
+        Photon(const Vec &pt) : location(pt)
+        {
+        }
+
+        double &operator[](int index)
+        {
+            if (index == 0) return location.x;
+            else if (index == 1) return location.y;
+            else return location.z;
+        } 
+
+        double operator[](int index) const
+        {
+            if (index == 0) return location.x;
+            else if (index == 1) return location.y;
+            else return location.z;
+        } 
+    };
+
+    Photon *photons;
+    KdTree<Photon> *map;
+
+public:
+
+    PhotonMap();
+    virtual ~PhotonMap();
+
+    void build(const Scene &scene, int nphotons,
+        bool include_direct_lighting, int max_depth);
+
+    void query(const Vec &pt, int nphotons, double eps,
+        double &r, double &g, double &b) const; 
 };
 
+
 #endif
-
-

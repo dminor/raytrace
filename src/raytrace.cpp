@@ -24,6 +24,7 @@ THE SOFTWARE.
 #include <limits>
 
 #include "image.h" 
+#include "photon_map.h"
 #include "scene.h"
 #include "vec.h"
 #include "view.h"
@@ -32,7 +33,8 @@ int main(int argc, char **argv)
 { 
 
     if (argc < 3) {
-        fprintf(stderr, "usage: raytrace <view> <scene> [--samples]\n");
+        fprintf(stderr, "usage: raytrace <view> <scene> [--samples]");
+        fprintf(stderr, " [--use-photon-map] [--photons]");
         return 1;
     }
 
@@ -51,12 +53,27 @@ int main(int argc, char **argv)
     }
 
     //look at other arguments
+    bool use_photon_map = false;
     int samples = 1;
+    int nphotons = 10000;
 
     for (int i = 3; i < argc; ++i) {
-        if (sscanf(argv[i], "--samples=%d\n", &samples) == 1) { 
+        if (sscanf(argv[i], "--samples=%d", &samples) == 1) { 
             if (samples < 1) samples = 1;
         }
+
+        if (!strcmp(argv[i], "--use-photon-map")) { 
+            scene.use_photon_map = true;
+        }
+
+        if (sscanf(argv[i], "--photons=%d", &nphotons) == 1) { 
+            if (nphotons < 1) nphotons = 1;
+        }
+    }
+
+    //build photon map
+    if (scene.use_photon_map) { 
+        scene.photon_map.build(scene, nphotons, true, 5);  
     }
 
     //eyepoint
@@ -94,9 +111,12 @@ int main(int argc, char **argv)
 
                     double r, g, b;
                     material->shade(scene, ray, pt, n, r, g, b); 
-                    R += r / (double)samples;
-                    G += g / (double)samples;
-                    B += b / (double)samples;
+
+                    double scale = 1.0/(double)samples;
+
+                    R += r*scale; 
+                    G += g*scale;
+                    B += b*scale;
                 }
             }
 

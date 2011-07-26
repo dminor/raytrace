@@ -31,6 +31,11 @@ struct PointLight {
     PointLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~PointLight() {};
 
+    virtual Ray emit()
+    {
+        return Ray(0, location, Vec::random_cosine_vec());
+    } 
+
     virtual Vec random_point()
     {
         return location;

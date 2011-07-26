@@ -26,8 +26,19 @@ THE SOFTWARE.
 #include "vec.h"
 
 struct Ray {
+    int depth;  //recursive depth for ray creation
     Vec origin;
-    Vec direction; 
+    Vec direction;
+
+    Ray()
+    { 
+        depth = 0;
+    } 
+
+    Ray(int depth, const Vec &origin, const Vec &direction)
+        : depth(depth), origin(origin), direction(direction)
+    { 
+    } 
 };
 
 #endif

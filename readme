@@ -1,14 +1,30 @@
-A simple photon mapping based ray tracer developed to support experiments with nearest-neighbour algorithms.
+A simple photon mapping based ray tracer developed to support experiments with
+nearest-neighbour algorithms.
 
 Features:
 * Lua scene and view definitions.
 * Sphere, plane and triangle mesh primitives.
-* Point light sources.
-
-Planned features:
-* Rectangular and spherical light sources.
-* Shadows.
+* Point and rectangular light sources.
+* Soft shadows.
 * Photon mapping.
 
-Maybe someday:
-* Textures
+To do:
+* Proper sampling for initial rays.
+* Mode to only use photon mapping for indirect lighting.
+* Look at ray propagation for Lambertian materials.
+* Look at separate caustic photon map.
+* Spherical light sources.  
+* Textures.
+* Take another look at dielectric implementation.
+
+The design and implementation were influenced by the following books:
+
+Ericson, C. (2005) Real-Time Collision Detection, Morgan Kauffman,
+San Francisco, CA
+
+Jansen, H. W. (2001) Realistic Image Synthesis Using Photon Mapping,
+2nd Edition, A K Peters, Natick, MA
+
+Shirley, P. and Morley, R. K. (2003) Realistic Ray Tracing, 2nd Edition,
+A K Peters, Natick, MA 
+
