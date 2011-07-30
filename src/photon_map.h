@@ -60,6 +60,7 @@ class PhotonMap {
 
     Photon *photons;
     KdTree<Photon> *map;
+    int number_emitted;
 
 public:
 

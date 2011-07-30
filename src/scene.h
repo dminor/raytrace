@@ -33,6 +33,7 @@ struct Scene : public Group {
     PhotonMap photon_map;
 
     bool use_photon_map;
+    int query_photons;
 
     virtual ~Scene();
 

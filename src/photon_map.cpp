@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include "ray.h"
 
 PhotonMap::PhotonMap()
-    : photons(0), map(0)
+    : photons(0), map(0), number_emitted(0)
 { 
 }
 
@@ -56,12 +56,11 @@ void PhotonMap::build(const Scene &scene, int nphotons,
         Ray ray = light->emit();
         bool in_scene = true; 
         double R, G, B;
-        R = light->r;
-        G = light->g;
-        B = light->b;
+        R = light->r*10000.0/(double)nphotons;
+        G = light->g*10000.0/(double)nphotons;
+        B = light->b*10000.0/(double)nphotons;
 
-        printf("%d emitting: %f %f %f\n", i,
-            ray.direction.x, ray.direction.y, ray.direction.z);
+        ++number_emitted;
 
         while (in_scene && ray.depth < max_depth) { 
             Vec pt, n; 
@@ -99,20 +98,16 @@ void PhotonMap::build(const Scene &scene, int nphotons,
                     photons[i].g = G;
                     photons[i].b = B;
 
-                    //printf("storing: %.1f %.1f %.1f", pt.x, pt.y, pt.z);
-                    //printf(" %d %.1f %.1f %.1f\n", i, R, G, B);
-
-                    //FIXME: should have attenuation due to surface
-                    //absorption
-                    R *= 0.05;
-                    G *= 0.05;
-                    B *= 0.05; 
+                    //Attenuation due to surface absorption
+                    R *= lm->reflectivity;
+                    G *= lm->reflectivity;
+                    B *= lm->reflectivity; 
 
                     ++i;
                 }  else {
                 }
 
-                if (R < 0.001 && G < 0.001 && B < 0.001) {
+                if (R < 0.0001 && G < 0.001 && B < 0.001) {
                     in_scene = false;
                 } else { 
                     //update ray 
@@ -147,13 +142,13 @@ void PhotonMap::query(const Vec &pt, int nphotons, double eps,
     }
 
     double scale = qr.back().second;
-    if (scale > 0.0) scale = 1.0/(3.14159265358979323*scale*scale);
+    if (scale > 0.0) {
+        scale = 1.0/(3.14159265358979323*scale*scale*number_emitted);
+    }
 
     r *= scale;
     g *= scale;
     b *= scale;
-
-    //printf("%.1f %.1f %.1f\n", r, g, b);
 }
 
 

@@ -53,9 +53,10 @@ int main(int argc, char **argv)
     }
 
     //look at other arguments
-    bool use_photon_map = false;
+    scene.use_photon_map = false;
     int samples = 1;
-    int nphotons = 10000;
+    int bphotons = 10000;
+    int qphotons = 50;
 
     for (int i = 3; i < argc; ++i) {
         if (sscanf(argv[i], "--samples=%d", &samples) == 1) { 
@@ -66,14 +67,19 @@ int main(int argc, char **argv)
             scene.use_photon_map = true;
         }
 
-        if (sscanf(argv[i], "--photons=%d", &nphotons) == 1) { 
-            if (nphotons < 1) nphotons = 1;
+        if (sscanf(argv[i], "--build-photons=%d", &bphotons) == 1) { 
+            if (bphotons < 1) bphotons = 1;
+        }
+
+        if (sscanf(argv[i], "--query-photons=%d", &qphotons) == 1) { 
+            if (qphotons < 1) qphotons = 1;
         }
     }
 
     //build photon map
     if (scene.use_photon_map) { 
-        scene.photon_map.build(scene, nphotons, true, 5);  
+        scene.photon_map.build(scene, bphotons, true, 5);  
+        scene.query_photons = qphotons;
     }
 
     //eyepoint
@@ -90,6 +96,8 @@ int main(int argc, char **argv)
     //create image and trace a ray for each pixel
     Image i(view.width, view.height);
     for (int x = 0; x < view.width; ++x) {
+        printf("%.1f percent complete\n", 100.0*(double)x/(double)view.width);
+
         for (int y = 0; y < view.height; ++y) { 
             double R = 0.0, G = 0.0, B = 0.0;
 

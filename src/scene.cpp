@@ -87,7 +87,7 @@ static int lambertian(lua_State *ls)
         luaL_error(ls, "lambertian: expected table");
     }
 
-    double r, g, b;
+    double r, g, b, reflectivity;
 
     lua_getfield(ls, -1, "r");
     r = luaL_checknumber(ls, -1); 
@@ -101,8 +101,13 @@ static int lambertian(lua_State *ls)
     b = luaL_checknumber(ls, -1); 
     lua_pop(ls, 1);
  
+    lua_getfield(ls, -1, "reflectivity");
+    reflectivity = luaL_checknumber(ls, -1); 
+    lua_pop(ls, 1);
+
     LambertianMaterial *mat = new LambertianMaterial;
     mat->r = r; mat->g = g; mat->b = b; 
+    mat->reflectivity = reflectivity;
     lua_pushlightuserdata(ls, mat);
 
     return 1;

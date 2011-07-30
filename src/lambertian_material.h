@@ -31,8 +31,9 @@ THE SOFTWARE.
 struct LambertianMaterial : public Material {
 
     double r, g, b;
+    double reflectivity;
  
-    LambertianMaterial() : r(1.0), g(1.0), b(1.0) {};
+    LambertianMaterial() : r(1.0), g(1.0), b(1.0), reflectivity(0.2) {};
 
     virtual ~LambertianMaterial() {};
 
@@ -47,7 +48,7 @@ struct LambertianMaterial : public Material {
         Light *light;
 
         if (scene.use_photon_map) { 
-            scene.photon_map.query(pt, 50, 0.1, r, g, b);
+            scene.photon_map.query(pt, scene.query_photons, 0.0, r, g, b);
         } else {
             //assume one light per scene for now 
             for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
