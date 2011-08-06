@@ -39,7 +39,7 @@ struct DielectricMaterial : public Material {
     virtual ~DielectricMaterial() {};
 
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
-        const Vec &norm, double &r, double &g, double &b)
+        const Vec &norm, float &r, float &g, float &b)
     {
 
         double d_dot_n = incident.direction.dot(norm); 

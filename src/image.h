@@ -34,7 +34,7 @@ public:
     Image(size_t width, size_t height);
     virtual ~Image();
 
-    void set(size_t x, size_t y, double r, double g, double b);
+    void set(size_t x, size_t y, float r, float g, float b);
     bool save(const char *filename);
 
 private:

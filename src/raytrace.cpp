@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+#include <cmath>
 #include <cstdio>
 #include <limits>
 
@@ -34,7 +35,8 @@ int main(int argc, char **argv)
 
     if (argc < 3) {
         fprintf(stderr, "usage: raytrace <view> <scene> [--samples]");
-        fprintf(stderr, " [--use-photon-map] [--photons]");
+        fprintf(stderr, " [--use-photon-map]");
+        fprintf(stderr, " [--build-photons] [--query-photons]");
         return 1;
     }
 
@@ -60,6 +62,8 @@ int main(int argc, char **argv)
 
     for (int i = 3; i < argc; ++i) {
         if (sscanf(argv[i], "--samples=%d", &samples) == 1) { 
+            if (samples < 1) samples = 1;
+            samples = log(samples)/log(2.0);
             if (samples < 1) samples = 1;
         }
 
@@ -93,38 +97,48 @@ int main(int argc, char **argv)
 
     Vec view_right = view.dir.cross(view.up);
 
+    double px_width = (view.u1 - view.u0)/view.width; 
+    double px_height = (view.v1 - view.v0)/view.height; 
+
     //create image and trace a ray for each pixel
     Image i(view.width, view.height);
     for (int x = 0; x < view.width; ++x) {
         printf("%.1f percent complete\n", 100.0*(double)x/(double)view.width);
 
         for (int y = 0; y < view.height; ++y) { 
-            double R = 0.0, G = 0.0, B = 0.0;
+            float R = 0.0, G = 0.0, B = 0.0;
 
             for (int s = 0; s < samples; ++s) { 
-                //calculate ray direction vector
-                double us = view.u0 + (view.u1 - view.u0)*(x + 0.5)/view.width;
-                us += (double)rand()/(double)RAND_MAX/(double)view.width;
+                for (int t = 0; t < samples; ++t) { 
 
-                double vs = view.v0 + (view.v1 - view.v0)*(y + 0.5)/view.height;
-                vs += (double)rand()/(double)RAND_MAX/(double)view.height;
+                    //calculate ray direction vector 
+                    double us = view.u0 + px_width*(x + 0.5);
 
-                //negate y to correct for (0, 0) being top left rather than
-                //bottom left
-                ray.direction = view_right*us - view.up*vs + view.dir;
-                ray.direction.normalize();
+                    //us += (-0.5 + (double)rand()/(double)RAND_MAX)/(double)view.width;
+                    us += (double)s*px_width/(double)samples + (-0.5 + ((double)rand()/(double)RAND_MAX))
+                        /(double)view.width/(double)samples;
 
-                if (scene.intersect(ray, 0.0,
-                    std::numeric_limits<double>::max(), pt, n, material)) { 
+                    double vs = view.v0 + px_height*(y + 0.5);
+                    vs += (double)t*px_height/(double)samples + (-0.5 + ((double)rand()/(double)RAND_MAX))
+                        /(double)view.height/(double)samples;
 
-                    double r, g, b;
-                    material->shade(scene, ray, pt, n, r, g, b); 
+                    //negate y to correct for (0, 0) being top left rather than
+                    //bottom left
+                    ray.direction = view_right*us - view.up*vs + view.dir;
+                    ray.direction.normalize();
 
-                    double scale = 1.0/(double)samples;
+                    if (scene.intersect(ray, 0.0,
+                        std::numeric_limits<double>::max(), pt, n, material)) { 
 
-                    R += r*scale; 
-                    G += g*scale;
-                    B += b*scale;
+                        float r, g, b;
+                        material->shade(scene, ray, pt, n, r, g, b); 
+
+                        float scale = 1.0/(double)(samples*samples);
+
+                        R += r*scale; 
+                        G += g*scale;
+                        B += b*scale;
+                    }
                 }
             }
 

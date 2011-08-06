@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 #include <cstdio>
 
-void clamp(double &v, double min, double max)
+void clamp(float &v, float min, float max)
 {
     if (v < min) v = min;
     if (v > max) v = max;
@@ -47,7 +47,7 @@ Image::~Image()
     delete[] rows; 
 }
 
-void Image::set(size_t x, size_t y, double r, double g, double b)
+void Image::set(size_t x, size_t y, float r, float g, float b)
 {
     if (x < width && y < height) {
         clamp(r, 0.0, 1.0);

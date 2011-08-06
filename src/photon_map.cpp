@@ -129,7 +129,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
 }
 
 void PhotonMap::query(const Vec &pt, int nphotons, double eps,
-    double &r, double &g, double &b) const
+    float &r, float &g, float &b) const
 {
     r = g = b = 0.0;
  

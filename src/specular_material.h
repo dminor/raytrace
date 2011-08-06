@@ -35,7 +35,7 @@ struct SpecularMaterial : public Material {
     virtual ~SpecularMaterial() {};
 
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
-        const Vec &norm, double &r, double &g, double &b)
+        const Vec &norm, float &r, float &g, float &b)
     {
 
         //reflection

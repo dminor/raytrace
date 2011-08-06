@@ -30,10 +30,10 @@ THE SOFTWARE.
 
 struct LambertianMaterial : public Material {
 
-    double r, g, b;
+    float r, g, b;
     double reflectivity;
  
-    LambertianMaterial() : r(1.0), g(1.0), b(1.0), reflectivity(0.2) {};
+    LambertianMaterial() : r(1.0f), g(1.0f), b(1.0f), reflectivity(0.2) {};
 
     virtual ~LambertianMaterial() {};
 
@@ -43,7 +43,7 @@ struct LambertianMaterial : public Material {
     }
 
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
-        const Vec &norm, double &r, double &g, double &b)
+        const Vec &norm, float &r, float &g, float &b)
     {
         Light *light;
 
@@ -76,9 +76,9 @@ struct LambertianMaterial : public Material {
 
                 double attenuation = 1.0 / (tmax*tmax);
 
-                r = light->r*this->r*c*attenuation;
-                g = light->g*this->g*c*attenuation;
-                b = light->b*this->b*c*attenuation;
+                r = light->r*this->r*c*attenuation*reflectivity;
+                g = light->g*this->g*c*attenuation*reflectivity;
+                b = light->b*this->b*c*attenuation*reflectivity;
             }
         }
     }

@@ -33,7 +33,7 @@ class PhotonMap {
 
     struct Photon {
         Vec location;
-        double r, g, b;
+        float r, g, b;
 
         Photon()
         {
@@ -45,16 +45,12 @@ class PhotonMap {
 
         double &operator[](int index)
         {
-            if (index == 0) return location.x;
-            else if (index == 1) return location.y;
-            else return location.z;
+            return (&location.x)[index];
         } 
 
         double operator[](int index) const
         {
-            if (index == 0) return location.x;
-            else if (index == 1) return location.y;
-            else return location.z;
+            return (&location.x)[index];
         } 
     };
 
@@ -71,7 +67,7 @@ public:
         bool include_direct_lighting, int max_depth);
 
     void query(const Vec &pt, int nphotons, double eps,
-        double &r, double &g, double &b) const; 
+        float &r, float &g, float &b) const; 
 };
 
 
