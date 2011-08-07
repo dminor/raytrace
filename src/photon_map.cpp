@@ -55,10 +55,10 @@ void PhotonMap::build(const Scene &scene, int nphotons,
         //initialize ray from light source
         Ray ray = light->emit();
         bool in_scene = true; 
-        double R, G, B;
-        R = light->r*10000.0/(double)nphotons;
-        G = light->g*10000.0/(double)nphotons;
-        B = light->b*10000.0/(double)nphotons;
+        float R, G, B;
+        R = light->r;
+        G = light->g;
+        B = light->b;
 
         ++number_emitted;
 
@@ -71,8 +71,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
 
                 Vec direction = ray.origin - pt;
                 double length = direction.magnitude();
-                double attenuation = 1.0 / (length*length); 
-                if (attenuation > 1.0) attenuation = 1.0;
+                float attenuation = 1.0 / (1.0 + length*length); 
 
                 R *= attenuation;
                 G *= attenuation;
@@ -85,13 +84,18 @@ void PhotonMap::build(const Scene &scene, int nphotons,
                     lm = static_cast<LambertianMaterial *>(material);
 
                     direction.normalize();
-                    double c = n.dot(direction);
-                    if (c < 0.0) c = 0.0;
-                    if (c > 1.0) c = 1.0;
+                    float c = n.dot(direction);
+                    if (c < 0.0f) c = 0.0f;
+                    if (c > 1.0f) c = 1.0f;
 
                     R *= lm->r*c;
                     G *= lm->g*c;
                     B *= lm->b*c;
+
+                    /*
+                    printf("%d %f %f %f -> ", ray.depth, lm->r, lm->g, lm->b); 
+                    printf("%f %f %f\n", R, G, B);
+                    */
 
                     photons[i].location = pt;
                     photons[i].r = R;
@@ -107,7 +111,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
                 }  else {
                 }
 
-                if (R < 0.0001 && G < 0.001 && B < 0.001) {
+                if (R < 0.000001 && G < 0.00001 && B < 0.00001) {
                     in_scene = false;
                 } else { 
                     //update ray 
@@ -116,7 +120,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
 
                     Vec u, v;
                     n.construct_basis(u, v); 
-                    Vec w = Vec::random_cosine_vec(); 
+                    Vec w = Vec::sample_hemisphere_cosine_weighted(); 
                     ray.direction = u*w.x + v*w.y + n*w.z; 
                 }
             } else { 
@@ -141,14 +145,15 @@ void PhotonMap::query(const Vec &pt, int nphotons, double eps,
             b += itor->first->b;
     }
 
-    double scale = qr.back().second;
+    float scale = qr.back().second;
     if (scale > 0.0) {
-        scale = 1.0/(3.14159265358979323*scale*scale*number_emitted);
+        scale = 1.0f/(3.14159265358979323f*scale*scale*number_emitted);
     }
 
     r *= scale;
     g *= scale;
     b *= scale;
+
 }
 
 

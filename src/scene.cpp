@@ -196,30 +196,26 @@ static int rectangularlight(lua_State *ls)
     get_rgb(ls, r, g, b);    
     lua_pop(ls, 1);
 
-    lua_getfield(ls, -1, "pt");
+    lua_getfield(ls, -1, "pt1");
     double x1, y1, z1;
     get_xyz(ls, x1, y1, z1);    
     lua_pop(ls, 1);
 
-    lua_getfield(ls, -1, "normal");
+    lua_getfield(ls, -1, "pt2");
     double x2, y2, z2;
     get_xyz(ls, x2, y2, z2);    
     lua_pop(ls, 1);
 
-    lua_getfield(ls, -1, "width");
-    double width = luaL_checknumber(ls, -1);
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "height");
-    double height = luaL_checknumber(ls, -1);
+    lua_getfield(ls, -1, "normal");
+    double xn, yn, zn;
+    get_xyz(ls, xn, yn, zn);    
     lua_pop(ls, 1);
 
     RectangularLight *light = new RectangularLight;
     light->r = r; light->g = g; light->b = b;
-    light->pt.x = x1; light->pt.y = y1; light->pt.z = z1;
-    light->normal.x = x2; light->normal.y = y2; light->normal.z = z2;
-    light->width = width;
-    light->height = height;
+    light->pt1.x = x1; light->pt1.y = y1; light->pt1.z = z1;
+    light->pt2.x = x2; light->pt2.y = y2; light->pt2.z = z2;
+    light->normal.x = xn; light->normal.y = yn; light->normal.z = zn;
     lua_pushlightuserdata(ls, light);
 
     return 1;

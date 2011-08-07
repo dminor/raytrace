@@ -2,11 +2,10 @@
 scene { 
     lights={
         rectangularlight{
-            radiance={r=20000.0, g=20000.0, b=20000.0},
-            pt={x=0.0, y=9.9, z=-5.0},
+            radiance={r=10000.0, g=10000.0, b=10000.0},
+            pt1={x=-0.2, y=9.9, z=-4.8},
+            pt2={x=0.2, y=9.9, z=-5.2},
             normal={x=0.0, y=-1.0, z=0.0},
-            width=0.4,
-            height=0.4
         },
     }, 
     children={

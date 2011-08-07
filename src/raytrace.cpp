@@ -103,7 +103,7 @@ int main(int argc, char **argv)
     //create image and trace a ray for each pixel
     Image i(view.width, view.height);
     for (int x = 0; x < view.width; ++x) {
-        printf("%.1f percent complete\n", 100.0*(double)x/(double)view.width);
+        //printf("%.1f percent complete\n", 100.0*(double)x/(double)view.width);
 
         for (int y = 0; y < view.height; ++y) { 
             float R = 0.0, G = 0.0, B = 0.0;
@@ -133,11 +133,11 @@ int main(int argc, char **argv)
                         float r, g, b;
                         material->shade(scene, ray, pt, n, r, g, b); 
 
-                        float scale = 1.0/(double)(samples*samples);
+                        float scale = 1.0f/(float)(samples*samples);
 
                         R += r*scale; 
                         G += g*scale;
-                        B += b*scale;
+                        B += b*scale; 
                     }
                 }
             }

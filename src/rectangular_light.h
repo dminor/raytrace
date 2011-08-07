@@ -27,10 +27,9 @@ THE SOFTWARE.
 
 struct RectangularLight {
 
-    double r, g, b; 
-    Vec pt; 
+    float r, g, b; 
+    Vec pt1, pt2; 
     Vec normal; 
-    double width, height;
 
     RectangularLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~RectangularLight() {};
@@ -39,7 +38,7 @@ struct RectangularLight {
     {
         Vec u, v;
         normal.construct_basis(u, v); 
-        Vec w = Vec::random_cosine_vec(); 
+        Vec w = Vec::sample_hemisphere_cosine_weighted(); 
         Vec direction = u*w.x + v*w.y + normal*w.z; 
 
         return Ray(0, random_point(), direction); 
@@ -47,10 +46,9 @@ struct RectangularLight {
 
     virtual Vec random_point()
     {
-        //FIXME: only works for sources in x/y plane for now 
-        double x = pt.x - 0.5*width + width*((double)(rand())/(double)RAND_MAX);
-        double y = pt.y - 0.5*height + height*((double)(rand())/(double)RAND_MAX);
-        double z = pt.z;
+        double x = pt1.x + (pt2.x - pt1.x)*((double)(rand())/(double)RAND_MAX);
+        double y = pt1.y + (pt2.y - pt1.y)*((double)(rand())/(double)RAND_MAX);
+        double z = pt1.z + (pt2.z - pt1.z)*((double)(rand())/(double)RAND_MAX);
     
         return Vec(x, y, z);
     }

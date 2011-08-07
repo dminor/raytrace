@@ -25,15 +25,15 @@ THE SOFTWARE.
 
 struct PointLight {
 
-    double r, g, b; 
+    float r, g, b; 
     Vec location; 
 
     PointLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~PointLight() {};
 
     virtual Ray emit()
-    {
-        return Ray(0, location, Vec::random_cosine_vec());
+    { 
+        return Ray(0, location, Vec::sample_sphere());
     } 
 
     virtual Vec random_point()

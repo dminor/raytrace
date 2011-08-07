@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 struct Light {
 
-    double r, g, b; 
+    float r, g, b; 
 
     Light() : r(1.0), g(1.0), b(1.0) {};
     virtual ~Light() {};
