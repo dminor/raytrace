@@ -69,20 +69,13 @@ void PhotonMap::build(const Scene &scene, int nphotons,
             if (scene.intersect(ray, 0.1, std::numeric_limits<double>::max(),
                 pt, n, material)) {
 
-                Vec direction = ray.origin - pt;
-                double length = direction.magnitude();
-                float attenuation = 1.0 / (1.0 + length*length); 
-
-                R *= attenuation;
-                G *= attenuation;
-                B *= attenuation; 
-
                 //if lambertian material, store in photon map
                 if (material->isLambertian()) { 
 
                     LambertianMaterial *lm;
                     lm = static_cast<LambertianMaterial *>(material);
 
+                    Vec direction = ray.origin - pt;
                     direction.normalize();
                     float c = n.dot(direction);
                     if (c < 0.0f) c = 0.0f;
@@ -122,6 +115,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
                     n.construct_basis(u, v); 
                     Vec w = Vec::sample_hemisphere_cosine_weighted(); 
                     ray.direction = u*w.x + v*w.y + n*w.z; 
+                    ray.direction.normalize(); 
                 }
             } else { 
                 in_scene = false;
@@ -135,7 +129,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
 void PhotonMap::query(const Vec &pt, int nphotons, double eps,
     float &r, float &g, float &b) const
 {
-    r = g = b = 0.0;
+    r = g = b = 0.0f;
  
     std::list<std::pair<Photon *, double> > qr = map->knn(nphotons, pt, eps);
     for (std::list<std::pair<Photon *, double> >::iterator itor = qr.begin();

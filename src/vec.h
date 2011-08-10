@@ -191,7 +191,7 @@ struct Vec {
         v = cross(u);
     }
 
-    void print()
+    void print() const
     {
         printf("%f %f %f", x, y, z);
     }

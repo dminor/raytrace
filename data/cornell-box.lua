@@ -2,7 +2,7 @@
 scene { 
     lights={
         rectangularlight{
-            radiance={r=10000.0, g=10000.0, b=10000.0},
+            radiance={r=200.0, g=200.0, b=200.0},
             pt1={x=-0.2, y=9.9, z=-4.8},
             pt2={x=0.2, y=9.9, z=-5.2},
             normal={x=0.0, y=-1.0, z=0.0},
