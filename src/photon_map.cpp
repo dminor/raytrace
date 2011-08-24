@@ -41,6 +41,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
     bool include_direct_lighting, int max_depth)
 {
     photons = new Photon[nphotons];
+    this->nphotons = nphotons;
 
     Light *light;
 
@@ -150,4 +151,23 @@ void PhotonMap::query(const Vec &pt, int nphotons, double eps,
 
 }
 
+void PhotonMap::write(const char *filename) const
+{
+    FILE *f = fopen(filename, "w");
+
+    if (!f) {
+        fprintf(stderr, "error: could not write photon map to %s\n", filename);
+    }
+
+    fprintf(f, "%d\n", nphotons);
+
+    for (int i = 0; i < nphotons; ++i) {
+        const Photon &p = photons[i];
+
+        fprintf(f, "%f %f %f %f %f %f\n",
+            p.location.x, p.location.y, p.location.z, p.r, p.g, p.b);
+    }
+
+    fclose(f);
+}
 

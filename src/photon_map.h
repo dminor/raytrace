@@ -55,6 +55,7 @@ class PhotonMap {
     };
 
     Photon *photons;
+    int nphotons;
     KdTree<Photon> *map;
     int number_emitted;
 
@@ -68,6 +69,8 @@ public:
 
     void query(const Vec &pt, int nphotons, double eps,
         float &r, float &g, float &b) const; 
+
+    void write(const char *filename) const;
 };
 
 

@@ -56,6 +56,7 @@ int main(int argc, char **argv)
 
     //look at other arguments
     scene.use_photon_map = false;
+    bool write_photon_map = true;
     int samples = 1;
     int bphotons = 10000;
     int qphotons = 50;
@@ -71,6 +72,10 @@ int main(int argc, char **argv)
             scene.use_photon_map = true;
         }
 
+        if (!strcmp(argv[i], "--write-photon-map")) { 
+            write_photon_map = true;
+        }
+
         if (sscanf(argv[i], "--build-photons=%d", &bphotons) == 1) { 
             if (bphotons < 1) bphotons = 1;
         }
@@ -84,6 +89,10 @@ int main(int argc, char **argv)
     if (scene.use_photon_map) { 
         scene.photon_map.build(scene, bphotons, true, 5);  
         scene.query_photons = qphotons;
+
+        if (write_photon_map) {
+            scene.photon_map.write("photon-map.txt");
+        }
     }
 
     //eyepoint
