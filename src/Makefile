@@ -1,15 +1,14 @@
-
-INCS = -I../../kdtree/include -I/usr/include/lua5.1
-LIBS = -lpng -llua5.1
+INCS = -I../../kdtree/include -I/usr/include/lua5.2
+LIBS = -lpng -llua5.2
 CFLAGS = -g -O2
-LDFLAGS = 
+LDFLAGS =
 OBJS = lua_functions.o image.o photon_map.o scene.o raytrace.o view.o
 TARGET = ../bin/raytrace
 
 all: $(OBJS)
-	g++ $(LDFLAGS) $(LIBS) $(OBJS) -o $(TARGET) 
+	g++ $(LDFLAGS) $(OBJS) $(LIBS) -o $(TARGET)
 
-.cpp.o: 
+.cpp.o:
 	g++ $(INCS) $(CFLAGS) -c $< -o $@
 
 
@@ -26,4 +25,4 @@ raytrace.o: dielectric_material.h group.h intersectable.h plane.h quat.h ray.h\
 view.o: view.h
 
 clean:
-	rm *.o $(TARGET) 
+	rm *.o $(TARGET)

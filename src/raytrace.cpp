@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@ THE SOFTWARE.
 #include <cstdio>
 #include <limits>
 
-#include "image.h" 
+#include "image.h"
 #include "photon_map.h"
 #include "scene.h"
 #include "vec.h"
 #include "view.h"
 
 int main(int argc, char **argv)
-{ 
+{
 
     if (argc < 3) {
         fprintf(stderr, "usage: raytrace <view> <scene> [--samples]");
@@ -44,50 +44,53 @@ int main(int argc, char **argv)
     View view;
     if (!view.open(argv[1])) {
         fprintf(stderr, "error: could not open view: %s\n",argv[1]);
-        return 1; 
+        return 1;
     }
 
     //scene
     Scene scene;
     if (!scene.open(argv[2])) {
         fprintf(stderr, "error: could not open scene: %s\n",argv[2]);
-        return 1; 
+        return 1;
     }
 
     //look at other arguments
     scene.use_photon_map = false;
-    bool write_photon_map = true;
-    int samples = 1;
+    bool write_photon_map = false;
+    bool include_direct_lighting = false;
+    int samples = 10;
     int bphotons = 10000;
     int qphotons = 50;
 
     for (int i = 3; i < argc; ++i) {
-        if (sscanf(argv[i], "--samples=%d", &samples) == 1) { 
-            if (samples < 1) samples = 1;
-            samples = log(samples)/log(2.0);
+        if (sscanf(argv[i], "--samples=%d", &samples) == 1) {
             if (samples < 1) samples = 1;
         }
 
-        if (!strcmp(argv[i], "--use-photon-map")) { 
+        if (!strcmp(argv[i], "--use-photon-map")) {
             scene.use_photon_map = true;
         }
 
-        if (!strcmp(argv[i], "--write-photon-map")) { 
+        if (!strcmp(argv[i], "--write-photon-map")) {
             write_photon_map = true;
         }
 
-        if (sscanf(argv[i], "--build-photons=%d", &bphotons) == 1) { 
+        if (!strcmp(argv[i], "--include-direct-lighting")) {
+            include_direct_lighting = true;
+        }
+
+        if (sscanf(argv[i], "--build-photons=%d", &bphotons) == 1) {
             if (bphotons < 1) bphotons = 1;
         }
 
-        if (sscanf(argv[i], "--query-photons=%d", &qphotons) == 1) { 
+        if (sscanf(argv[i], "--query-photons=%d", &qphotons) == 1) {
             if (qphotons < 1) qphotons = 1;
         }
     }
 
     //build photon map
-    if (scene.use_photon_map) { 
-        scene.photon_map.build(scene, bphotons, true, 5);  
+    if (scene.use_photon_map) {
+        scene.photon_map.build(scene, bphotons, include_direct_lighting, 10);
         scene.query_photons = qphotons;
 
         if (write_photon_map) {
@@ -97,7 +100,7 @@ int main(int argc, char **argv)
 
     //eyepoint
     Ray ray;
-    ray.origin = view.pos; 
+    ray.origin = view.pos;
 
     //intersection material, point and normal
     Material *material;
@@ -106,21 +109,21 @@ int main(int argc, char **argv)
 
     Vec view_right = view.dir.cross(view.up);
 
-    double px_width = (view.u1 - view.u0)/view.width; 
-    double px_height = (view.v1 - view.v0)/view.height; 
+    double px_width = (view.u1 - view.u0)/view.width;
+    double px_height = (view.v1 - view.v0)/view.height;
 
     //create image and trace a ray for each pixel
     Image i(view.width, view.height);
     for (int x = 0; x < view.width; ++x) {
         //printf("%.1f percent complete\n", 100.0*(double)x/(double)view.width);
 
-        for (int y = 0; y < view.height; ++y) { 
+        for (int y = 0; y < view.height; ++y) {
             float R = 0.0, G = 0.0, B = 0.0;
 
-            for (int s = 0; s < samples; ++s) { 
-                for (int t = 0; t < samples; ++t) { 
+            for (int s = 0; s < samples; ++s) {
+                for (int t = 0; t < samples; ++t) {
 
-                    //calculate ray direction vector 
+                    //calculate ray direction vector
                     double us = view.u0 + px_width*(x + 0.5);
 
                     //us += (-0.5 + (double)rand()/(double)RAND_MAX)/(double)view.width;
@@ -137,21 +140,21 @@ int main(int argc, char **argv)
                     ray.direction.normalize();
 
                     if (scene.intersect(ray, 0.0,
-                        std::numeric_limits<double>::max(), pt, n, material)) { 
+                        std::numeric_limits<double>::max(), pt, n, material)) {
 
                         float r, g, b;
-                        material->shade(scene, ray, pt, n, r, g, b); 
+                        material->shade(scene, ray, pt, n, r, g, b);
 
                         float scale = 1.0f/(float)(samples*samples);
 
-                        R += r*scale; 
+                        R += r*scale;
                         G += g*scale;
-                        B += b*scale; 
+                        B += b*scale;
                     }
                 }
             }
 
-            i.set(x, y, R, G, B); 
+            i.set(x, y, R, G, B);
         }
     }
 

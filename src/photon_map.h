@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef PHOTON_MAP_H_ 
-#define PHOTON_MAP_H_ 
+#ifndef PHOTON_MAP_H_
+#define PHOTON_MAP_H_
 
 #include "vec.h"
 
-#include "kdtree.h"
+#include "kdtree/include/kdtree.h"
 
 struct Scene;
 
 class PhotonMap {
 
     struct Photon {
+        Vec direction;
         Vec location;
         float r, g, b;
 
@@ -46,17 +47,17 @@ class PhotonMap {
         double &operator[](int index)
         {
             return (&location.x)[index];
-        } 
+        }
 
         double operator[](int index) const
         {
             return (&location.x)[index];
-        } 
+        }
     };
 
     Photon *photons;
     int nphotons;
-    KdTree<Photon> *map;
+    KdTree<Photon, double> *map;
     int number_emitted;
 
 public:
@@ -67,8 +68,8 @@ public:
     void build(const Scene &scene, int nphotons,
         bool include_direct_lighting, int max_depth);
 
-    void query(const Vec &pt, int nphotons, double eps,
-        float &r, float &g, float &b) const; 
+    void query(const Vec &pt, const Vec &norm, int nphotons, double eps,
+        float &r, float &g, float &b) const;
 
     void write(const char *filename) const;
 };

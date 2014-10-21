@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 PhotonMap::PhotonMap()
     : photons(0), map(0), number_emitted(0)
-{ 
+{
 }
 
 PhotonMap::~PhotonMap()
@@ -45,33 +45,33 @@ void PhotonMap::build(const Scene &scene, int nphotons,
 
     Light *light;
 
-    //assume one light per scene for now 
+    //assume one light per scene for now
     for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
         light = *itor;
-    } 
+    }
 
     int i = 0;
     while (i < nphotons) {
 
         //initialize ray from light source
         Ray ray = light->emit();
-        bool in_scene = true; 
+        bool in_scene = true;
         float R, G, B;
         R = light->r;
         G = light->g;
         B = light->b;
 
-        ++number_emitted;
-
-        while (in_scene && ray.depth < max_depth) { 
-            Vec pt, n; 
+        while (in_scene && ray.depth < max_depth) {
+            Vec pt, n;
             Material *material;
+
+            ++number_emitted;
 
             if (scene.intersect(ray, 0.1, std::numeric_limits<double>::max(),
                 pt, n, material)) {
 
                 //if lambertian material, store in photon map
-                if (material->isLambertian()) { 
+                if (material->isLambertian()) {
 
                     LambertianMaterial *lm;
                     lm = static_cast<LambertianMaterial *>(material);
@@ -79,71 +79,73 @@ void PhotonMap::build(const Scene &scene, int nphotons,
                     Vec direction = ray.origin - pt;
                     direction.normalize();
                     float c = n.dot(direction);
-                    if (c < 0.0f) c = 0.0f;
-                    if (c > 1.0f) c = 1.0f;
-
-                    R *= lm->r*c;
-                    G *= lm->g*c;
-                    B *= lm->b*c;
+                    if (c > 0.0f) {
+                        R *= lm->r*c;
+                        G *= lm->g*c;
+                        B *= lm->b*c;
+                    }
 
                     /*
-                    printf("%d %f %f %f -> ", ray.depth, lm->r, lm->g, lm->b); 
+                    printf("%d %f %f %f -> ", ray.depth, lm->r, lm->g, lm->b);
                     printf("%f %f %f\n", R, G, B);
                     */
 
-                    photons[i].location = pt;
-                    photons[i].r = R;
-                    photons[i].g = G;
-                    photons[i].b = B;
+                    if (include_direct_lighting || ray.depth > 0) {
+                        photons[i].direction = direction;
+                        photons[i].location = pt;
+                        photons[i].r = R;
+                        photons[i].g = G;
+                        photons[i].b = B;
+
+                        ++i;
+                    }
 
                     //Attenuation due to surface absorption
                     R *= lm->reflectivity;
                     G *= lm->reflectivity;
-                    B *= lm->reflectivity; 
+                    B *= lm->reflectivity;
 
-                    ++i;
                 }  else {
                 }
 
-                if (R < 0.000001 && G < 0.00001 && B < 0.00001) {
+                if (R < 0.001 && G < 0.001 && B < 0.001) {
                     in_scene = false;
-                } else { 
-                    //update ray 
+                } else {
+                    //update ray
                     ++ray.depth;
                     ray.origin = pt;
 
                     Vec u, v;
-                    n.construct_basis(u, v); 
-                    Vec w = Vec::sample_hemisphere_cosine_weighted(); 
-                    ray.direction = u*w.x + v*w.y + n*w.z; 
-                    ray.direction.normalize(); 
+                    n.construct_basis(u, v);
+                    Vec w = Vec::sample_hemisphere_cosine_weighted();
+                    ray.direction = u*w.x + v*w.y + n*w.z;
+                    ray.direction.normalize();
                 }
-            } else { 
+            } else {
                 in_scene = false;
-            } 
+            }
         }
     }
 
-    map = new KdTree<Photon>(3, photons, nphotons); 
+    map = new KdTree<Photon, double>(3, photons, nphotons);
 }
 
-void PhotonMap::query(const Vec &pt, int nphotons, double eps,
+void PhotonMap::query(const Vec &pt, const Vec &norm, int nphotons, double eps,
     float &r, float &g, float &b) const
 {
     r = g = b = 0.0f;
- 
+
     std::list<std::pair<Photon *, double> > qr = map->knn(nphotons, pt, eps);
     for (std::list<std::pair<Photon *, double> >::iterator itor = qr.begin();
         itor != qr.end(); ++itor) {
-            r += itor->first->r;
-            g += itor->first->g;
-            b += itor->first->b;
+            if (itor->first->direction.dot(norm) > 0) {
+                r += itor->first->r;
+                g += itor->first->g;
+                b += itor->first->b;
+            }
     }
 
-    float scale = qr.back().second;
-    if (scale > 0.0) {
-        scale = 1.0f/(3.14159265358979323f*scale*scale*number_emitted);
-    }
+    double scale = 1.0/(3.14159265358979323f*qr.back().second*number_emitted);
 
     r *= scale;
     g *= scale;

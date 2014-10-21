@@ -1,16 +1,16 @@
 
-INCS = 
+INCS =
 LIBS = -lSDL -lGL -lGLEW -lGLU
-CFLAGS = 
-LDFLAGS = 
+CFLAGS =
+LDFLAGS =
 OBJS = main.o
 TARGET = ../../bin/view-photon-map
 
 all: $(OBJS)
-	g++ $(LDFLAGS) $(LIBS) $(OBJS) -o $(TARGET) 
+	g++ $(LDFLAGS) $(OBJS) $(LIBS) -o $(TARGET)
 
 .cpp.o:
 	g++ $(INCS) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm *.o $(TARGET) 
+	rm *.o $(TARGET)
