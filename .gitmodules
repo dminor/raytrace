@@ -1,3 +1,0 @@
-[submodule "src/kdtree"]
-	path = src/kdtree
-	url = https://github.com/dminor/kdtree
