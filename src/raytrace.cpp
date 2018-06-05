@@ -22,6 +22,7 @@ THE SOFTWARE.
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <limits>
 
 #include "image.h"
