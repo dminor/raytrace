@@ -172,4 +172,3 @@ void PhotonMap::write(const char *filename) const
 
     fclose(f);
 }
-

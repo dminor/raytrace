@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ struct View {
 
     //rendered image height and width
     int height, width;
-    
+
     //eyepoint parameters
     Vec pos, dir, up;
 

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,36 +34,34 @@ struct Group : public Intersectable {
 
     virtual ~Group() {
         for (std::vector<Intersectable *>::iterator itor = children.begin(); itor != children.end(); ++itor) {
-            delete *itor; 
-        } 
+            delete *itor;
+        }
     };
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const
     {
         bool hit = false;
-        double closest_distance = std::numeric_limits<double>::max(); 
+        double closest_distance = std::numeric_limits<double>::max();
         for (std::vector<Intersectable *>::const_iterator itor = children.begin(); itor != children.end(); ++itor) {
             Vec temp_pt;
             Vec temp_norm;
             Material *temp_mat;
-            if ((*itor)->intersect(ray, tmin, tmax, temp_pt, temp_norm, temp_mat)) { 
+            if ((*itor)->intersect(ray, tmin, tmax, temp_pt, temp_norm, temp_mat)) {
                 hit = true;
                 Vec dist_vec = temp_pt - ray.origin;
                 double distance = dist_vec.dot(dist_vec);
                 if (distance < closest_distance) {
-                    closest_distance = distance; 
+                    closest_distance = distance;
                     pt = temp_pt;
                     norm = temp_norm;
-                    mat = temp_mat; 
+                    mat = temp_mat;
                 }
             }
-        } 
+        }
 
         return hit;
     }
 };
 
 #endif
-
-

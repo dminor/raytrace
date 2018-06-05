@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,8 +42,8 @@ struct Plane : public Intersectable {
         //check for near-zero values -- either parallel or in same plane
         if (fabs(d) < INTERSECTION_EPSILON) return false;
 
-        //calculate hit 
-        double t = n/d; 
+        //calculate hit
+        double t = n/d;
         if (t < tmin || t > tmax) return false;
 
         pt = ray.origin + ray.direction*t;

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,34 +28,34 @@ extern "C" {
 }
 
 
-// helper function to get x, y and z values from table at top of stack    
+// helper function to get x, y and z values from table at top of stack
 void get_xyz(lua_State *ls, double &x, double &y, double &z)
 {
     lua_getfield(ls, -1, "x");
-    x = luaL_checknumber(ls, -1); 
+    x = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "y");
-    y = luaL_checknumber(ls, -1); 
+    y = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "z");
-    z = luaL_checknumber(ls, -1); 
+    z = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 }
 
-// helper function to get r, g and b values from table at top of stack    
+// helper function to get r, g and b values from table at top of stack
 void get_rgb(lua_State *ls, double &r, double &g, double &b)
 {
     lua_getfield(ls, -1, "r");
-    r = luaL_checknumber(ls, -1); 
+    r = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "g");
-    g = luaL_checknumber(ls, -1); 
+    g = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "b");
-    b = luaL_checknumber(ls, -1); 
+    b = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 }

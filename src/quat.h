@@ -82,8 +82,8 @@ struct Quat {
     Quat operator*(Vec other) const
     {
         Quat result;
-        result.s = 0.0; 
-        result.v = other*s + v.cross(other); 
+        result.s = 0.0;
+        result.v = other*s + v.cross(other);
         return result;
     }
 

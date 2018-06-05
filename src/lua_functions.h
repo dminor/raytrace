@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef LUA_FUNCTIONS_H_ 
+#ifndef LUA_FUNCTIONS_H_
 #define LUA_FUNCTIONS_H_
 
 extern "C" {
     #include <lua.h>
 }
 
-// helper function to get x, y and z values from table at top of stack    
+// helper function to get x, y and z values from table at top of stack
 void get_xyz(lua_State *ls, double &x, double &y, double &z);
 
-// helper function to get r, g and b values from table at top of stack    
+// helper function to get r, g and b values from table at top of stack
 void get_rgb(lua_State *ls, double &r, double &g, double &b);
 
 #endif

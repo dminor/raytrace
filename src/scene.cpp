@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -46,12 +46,12 @@ extern "C" {
 
 static int dielectric(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "dielectric: expected table");
     }
- 
+
     lua_getfield(ls, -1, "nt");
-    double nt = luaL_checknumber(ls, -1); 
+    double nt = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     DielectricMaterial *mat = new DielectricMaterial;
@@ -62,14 +62,14 @@ static int dielectric(lua_State *ls)
 }
 static int group(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "group: expected table");
     }
 
     Group *group = new Group;
 
     lua_getfield(ls, -1, "children");
-    lua_pushnil(ls); 
+    lua_pushnil(ls);
     while (lua_next(ls, -2)) {
         Intersectable *i = reinterpret_cast<Intersectable *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
@@ -83,30 +83,30 @@ static int group(lua_State *ls)
 
 static int lambertian(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "lambertian: expected table");
     }
 
     double r, g, b, reflectivity;
 
     lua_getfield(ls, -1, "r");
-    r = luaL_checknumber(ls, -1); 
+    r = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "g");
-    g = luaL_checknumber(ls, -1); 
+    g = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "b");
-    b = luaL_checknumber(ls, -1); 
+    b = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
- 
+
     lua_getfield(ls, -1, "reflectivity");
-    reflectivity = luaL_checknumber(ls, -1); 
+    reflectivity = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     LambertianMaterial *mat = new LambertianMaterial;
-    mat->r = r; mat->g = g; mat->b = b; 
+    mat->r = r; mat->g = g; mat->b = b;
     mat->reflectivity = reflectivity;
     lua_pushlightuserdata(ls, mat);
 
@@ -115,18 +115,18 @@ static int lambertian(lua_State *ls)
 
 static int pointlight(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "pointlight: expected table");
     }
 
     lua_getfield(ls, -1, "radiance");
-    double r, g, b; 
-    get_rgb(ls, r, g, b);    
+    double r, g, b;
+    get_rgb(ls, r, g, b);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "location");
     double x, y, z;
-    get_xyz(ls, x, y, z);    
+    get_xyz(ls, x, y, z);
 
     PointLight *light = new PointLight;
     light->r = r; light->g = g; light->b = b;
@@ -138,18 +138,18 @@ static int pointlight(lua_State *ls)
 
 static int plane(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "plane: expected table");
     }
 
     double pt_x, pt_y, pt_z;
     lua_getfield(ls, -1, "pt");
-    get_xyz(ls, pt_x, pt_y, pt_z);    
+    get_xyz(ls, pt_x, pt_y, pt_z);
     lua_pop(ls, 1);
 
     double norm_x, norm_y, norm_z;
     lua_getfield(ls, -1, "norm");
-    get_xyz(ls, norm_x, norm_y, norm_z);    
+    get_xyz(ls, norm_x, norm_y, norm_z);
     lua_pop(ls, 1);
 
 
@@ -168,7 +168,7 @@ static int plane(lua_State *ls)
 
 static int quat(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "quat: expected table");
     }
 
@@ -177,7 +177,7 @@ static int quat(lua_State *ls)
     lua_pop(ls, 1);
 
     double x, y, z;
-    get_xyz(ls, x, y, z);    
+    get_xyz(ls, x, y, z);
 
     Quat *quat = new Quat(angle, x, y, z);
     lua_pushlightuserdata(ls, quat);
@@ -187,28 +187,28 @@ static int quat(lua_State *ls)
 
 static int rectangularlight(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "rectangularlight: expected table");
     }
 
     lua_getfield(ls, -1, "radiance");
-    double r, g, b; 
-    get_rgb(ls, r, g, b);    
+    double r, g, b;
+    get_rgb(ls, r, g, b);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "pt1");
     double x1, y1, z1;
-    get_xyz(ls, x1, y1, z1);    
+    get_xyz(ls, x1, y1, z1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "pt2");
     double x2, y2, z2;
-    get_xyz(ls, x2, y2, z2);    
+    get_xyz(ls, x2, y2, z2);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "normal");
     double xn, yn, zn;
-    get_xyz(ls, xn, yn, zn);    
+    get_xyz(ls, xn, yn, zn);
     lua_pop(ls, 1);
 
     RectangularLight *light = new RectangularLight;
@@ -222,7 +222,7 @@ static int rectangularlight(lua_State *ls)
 }
 static int scene(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "scene: expected table");
     }
 
@@ -232,7 +232,7 @@ static int scene(lua_State *ls)
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "lights");
-    lua_pushnil(ls); 
+    lua_pushnil(ls);
     while (lua_next(ls, -2)) {
         Light *light = reinterpret_cast<Light *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
@@ -241,11 +241,11 @@ static int scene(lua_State *ls)
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "children");
-    lua_pushnil(ls); 
+    lua_pushnil(ls);
     while (lua_next(ls, -2)) {
         Intersectable *i = reinterpret_cast<Intersectable *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
-        scene->children.push_back(i); 
+        scene->children.push_back(i);
     }
     lua_pop(ls, 1);
 
@@ -254,10 +254,10 @@ static int scene(lua_State *ls)
 
 static int specular(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "specular: expected table");
     }
- 
+
     SpecularMaterial *mat = new SpecularMaterial;
     lua_pushlightuserdata(ls, mat);
 
@@ -267,13 +267,13 @@ static int specular(lua_State *ls)
 
 static int sphere(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "sphere: expected table");
     }
 
     double x, y, z;
     lua_getfield(ls, -1, "centre");
-    get_xyz(ls, x, y, z);    
+    get_xyz(ls, x, y, z);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "radius");
@@ -295,7 +295,7 @@ static int sphere(lua_State *ls)
 
 static int transform(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "transform: expected table");
     }
 
@@ -307,7 +307,7 @@ static int transform(lua_State *ls)
     //rotations -- we loop over these and multiply them together
     Quat rotation;
     lua_getfield(ls, -1, "rotation");
-    lua_pushnil(ls); 
+    lua_pushnil(ls);
     while (lua_next(ls, -2)) {
         Quat *q = reinterpret_cast<Quat *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
@@ -317,12 +317,12 @@ static int transform(lua_State *ls)
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "child");
-    Intersectable *child = reinterpret_cast<Intersectable *>(lua_touserdata(ls, -1)); 
+    Intersectable *child = reinterpret_cast<Intersectable *>(lua_touserdata(ls, -1));
     lua_pop(ls, 1);
 
     Transform *transform = new Transform;
     transform->translation.x = x; transform->translation.y = y; transform->translation.z = z;
-    transform->rotation = rotation; 
+    transform->rotation = rotation;
     transform->child = child;
 
     lua_pushlightuserdata(ls, transform);
@@ -333,7 +333,7 @@ static int transform(lua_State *ls)
 
 static int trimesh(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "trimesh: expected table");
     }
 
@@ -370,23 +370,23 @@ static luaL_Reg fns[] = {
     {0, 0}
 };
 
-Scene::~Scene() { 
+Scene::~Scene() {
     for (std::vector<Light *>::iterator itor = lights.begin(); itor != lights.end(); ++itor) {
-        delete *itor; 
-    } 
+        delete *itor;
+    }
 }
 
 bool Scene::open(const char *filename)
 {
     bool result = true;
- 
-    lua_State *ls = luaL_newstate(); 
+
+    lua_State *ls = luaL_newstate();
     luaL_openlibs(ls);
 
     //register functions in global namespace
     luaL_Reg *fn = fns;
     while (fn->name != 0) {
-        lua_register(ls, fn->name, fn->func); 
+        lua_register(ls, fn->name, fn->func);
         ++fn;
     }
 

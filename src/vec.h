@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/ 
+*/
 
 #ifndef VEC_H_
 #define VEC_H_
@@ -55,7 +55,7 @@ struct Vec {
 
         result.x = cos(2*pi*u2)*2*sqrt(1.0 - u1*u1);
         result.y = sin(2*pi*u2)*2*sqrt(1.0 - u1*u1);
-        result.z = u1; 
+        result.z = u1;
 
         return result;
     }
@@ -97,7 +97,7 @@ struct Vec {
 
         result.x = cos(phi)*sin_theta;
         result.y = sin(phi)*sin_theta;
-        result.z = cos_theta; 
+        result.z = cos_theta;
         */
 
         return result;
@@ -128,7 +128,7 @@ struct Vec {
         result.x = -x;
         result.y = -y;
         result.z = -z;
-        return result; 
+        return result;
     }
 
     Vec operator*(const Vec &other) const
@@ -137,7 +137,7 @@ struct Vec {
         result.x = x*other.x;
         result.y = y*other.y;
         result.z = z*other.z;
-        return result; 
+        return result;
     }
 
     Vec operator*(double d) const
@@ -146,7 +146,7 @@ struct Vec {
         result.x = x*d;
         result.y = y*d;
         result.z = z*d;
-        return result; 
+        return result;
     }
 
     Vec cross(const Vec &other) const
@@ -155,7 +155,7 @@ struct Vec {
         result.x = y*other.z - z*other.y;
         result.y = -x*other.z + z*other.x;
         result.z = x*other.y - y*other.x;
-        return result; 
+        return result;
     }
 
     double dot(const Vec &other) const
@@ -165,7 +165,7 @@ struct Vec {
 
     double magnitude() const
     {
-        return sqrt(dot(*this)); 
+        return sqrt(dot(*this));
     }
 
     void normalize()
@@ -178,7 +178,7 @@ struct Vec {
         }
     }
 
-    //construct non-unique orthonormal basis from this vector 
+    //construct non-unique orthonormal basis from this vector
     void construct_basis(Vec &u, Vec &v)
     {
         Vec n(1.0, 0.0, 0.0);

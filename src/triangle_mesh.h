@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,10 @@ THE SOFTWARE.
 
 #include <limits>
 
-#include "intersectable.h" 
+#include "intersectable.h"
 #include "sphere.h"
 
-#include <fstream> 
+#include <fstream>
 #include <vector>
 
 struct TriangleMesh : public Intersectable {
@@ -56,8 +56,7 @@ struct TriangleMesh : public Intersectable {
         bounds.centre.x = bounds.centre.y = bounds.centre.z = 0.0;
         bounds.radius = 0.0;
 
-        while (!f.eof()) {       
- 
+        while (!f.eof()) {
             f >> c;
 
             if (c == 'v') {
@@ -69,8 +68,7 @@ struct TriangleMesh : public Intersectable {
                 if (fabs(pt.y) > bounds.radius) bounds.radius = fabs(pt.y);
                 if (fabs(pt.z) > bounds.radius) bounds.radius = fabs(pt.z);
 
-                vertices.push_back(pt); 
- 
+                vertices.push_back(pt);
             } else if (c == 'f') {
                 f >> face.i; face.i -= 1;
                 f >> face.j; face.j -= 1;
@@ -81,7 +79,7 @@ struct TriangleMesh : public Intersectable {
                 Vec ac = vertices[face.k] - vertices[face.i];
                 face.normal = ab.cross(ac);
 
-                faces.push_back(face); 
+                faces.push_back(face);
 
             } else {
                 //ignore groups, materials, etc. for now
@@ -89,19 +87,18 @@ struct TriangleMesh : public Intersectable {
 
         }
 
-        f.close(); 
+        f.close();
 
         return true;
-
     }
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const
-    { 
+    {
         bool hit = false;
-        double closest_distance = std::numeric_limits<double>::max(); 
+        double closest_distance = std::numeric_limits<double>::max();
 
-        if (bounds.intersect(ray, tmin, tmax, pt, norm)) { 
+        if (bounds.intersect(ray, tmin, tmax, pt, norm)) {
             for (std::vector<Face>::const_iterator itor = faces.begin();
                     itor != faces.end(); ++itor) {
                 Vec temp_pt;
@@ -112,7 +109,7 @@ struct TriangleMesh : public Intersectable {
                     Vec dist_vec = temp_pt - ray.origin;
                     double distance = dist_vec.dot(dist_vec);
                     if (distance < closest_distance) {
-                        closest_distance = distance; 
+                        closest_distance = distance;
                         pt = temp_pt;
                         norm = temp_norm;
                         mat = material;
@@ -120,7 +117,7 @@ struct TriangleMesh : public Intersectable {
                 }
             }
         }
-        if (hit) norm.normalize(); 
+        if (hit) norm.normalize();
         return hit;
     }
 
@@ -128,10 +125,10 @@ struct TriangleMesh : public Intersectable {
     // San Francisco, CA, pp. 190 - 192
     virtual bool intersect_face(const Ray &ray, double tmin, double tmax,
         const Face &f, Vec &pt, Vec &norm) const
-    { 
+    {
         const Vec &a = vertices[f.i];
         const Vec &b = vertices[f.j];
-        const Vec &c = vertices[f.k]; 
+        const Vec &c = vertices[f.k];
 
         Vec ab = b - a;
         Vec ac = c - a;
@@ -146,19 +143,19 @@ struct TriangleMesh : public Intersectable {
 
         Vec ap = ray.origin - a;
         double t = ap.dot(f.normal);
-        if (t < 0.0) return false; 
+        if (t < 0.0) return false;
 
         Vec e = qp.cross(ap);
         double v = ac.dot(e);
-        if (v < 0.0 || v > d) return false; 
+        if (v < 0.0 || v > d) return false;
 
         double w = -ab.dot(e);
-        if (w < 0.0 || v + w > d) return false; 
+        if (w < 0.0 || v + w > d) return false;
 
         double ood = 1.0/d;
         t *= ood;
-        v *= ood; 
-        w *= ood; 
+        v *= ood;
+        w *= ood;
 
         pt = a + ac*v + ab*w;
         norm = f.normal;
@@ -166,9 +163,8 @@ struct TriangleMesh : public Intersectable {
         double dist = (pt - ray.origin).magnitude();
         if (dist < tmin || dist > tmax) return false;
 
-        return true; 
-   } 
-
+        return true;
+   }
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include <vector>
 
 #include "intersectable.h"
-#include "quat.h" 
+#include "quat.h"
 
 struct Transform : public Intersectable {
 
@@ -42,10 +42,10 @@ struct Transform : public Intersectable {
         Vec &pt, Vec &norm, Material *&mat) const
     {
         Ray r;
-        Quat conj_rotation = rotation.conjugate(); 
+        Quat conj_rotation = rotation.conjugate();
         r.origin = (conj_rotation*(ray.origin - translation)*rotation).v;
-        r.direction = (conj_rotation*ray.direction*rotation).v; 
-        return child->intersect(r, tmin, tmax, pt, norm, mat); 
+        r.direction = (conj_rotation*ray.direction*rotation).v;
+        return child->intersect(r, tmin, tmax, pt, norm, mat);
     }
 };
 

@@ -92,5 +92,3 @@ struct LambertianMaterial : public Material {
 };
 
 #endif
-
-

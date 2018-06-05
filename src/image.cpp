@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/ 
+*/
 
 #include "image.h"
 
@@ -35,16 +35,16 @@ Image::Image(size_t width, size_t height) : width(width), height(height)
     rows = new png_bytep[height];
     for (size_t i = 0; i < height; ++i) {
         rows[i] = new png_byte[width*3];
-    } 
+    }
 }
 
 Image::~Image()
-{ 
+{
     for (size_t i = 0; i < height; ++i) {
         delete[] rows[i];
     }
 
-    delete[] rows; 
+    delete[] rows;
 }
 
 void Image::set(size_t x, size_t y, float r, float g, float b)
@@ -57,7 +57,7 @@ void Image::set(size_t x, size_t y, float r, float g, float b)
         rows[y][x*3] = (png_byte)(r * 255.0);
         rows[y][x*3 + 1] = (png_byte)(g * 255.0);
         rows[y][x*3 + 2] = (png_byte)(b * 255.0);
-    } 
+    }
 }
 
 bool Image::save(const char *filename)
@@ -67,7 +67,7 @@ bool Image::save(const char *filename)
         fprintf(stderr, "error: could not open: %s\n", filename);
         return false;
     }
-    
+
     png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     png_infop info = png_create_info_struct(png);
 
@@ -84,7 +84,7 @@ bool Image::save(const char *filename)
 
     png_write_info(png, info);
     png_write_image(png, rows);
-    png_write_end(png, 0); 
+    png_write_end(png, 0);
     fclose(f);
 
     return true;

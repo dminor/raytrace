@@ -13,20 +13,20 @@ GLint pt_count;
 GLuint pt_buffer_id[2];
 
 void init()
-{ 
+{
     //init gl state
     glClearColor(0.2f, 0.2f, 0.5f, 0.0f);
-     
+
     glViewport(0, 0, 640, 480);
-     
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-     
+
     glPointSize(2);
     gluPerspective(30, 1.5, 0.1, 100);
-     
+
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity(); 
+    glLoadIdentity();
     glTranslatef(0.0, -5.0, -25.0f);
 
     //set up vertex and index buffer
@@ -37,11 +37,11 @@ void init()
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pt_buffer_id[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, pt_count*sizeof(GLuint),
-        pt_indices, GL_STATIC_DRAW); 
+        pt_indices, GL_STATIC_DRAW);
 }
 
 void render()
-{ 
+{
     int i;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -57,7 +57,7 @@ void render()
 
     glDrawElements(GL_POINTS, pt_count, GL_UNSIGNED_INT, 0);
 
-    SDL_GL_SwapBuffers(); 
+    SDL_GL_SwapBuffers();
 }
 
 int main(int argc, char **argv)
@@ -75,21 +75,21 @@ int main(int argc, char **argv)
     //read points
     FILE *f = fopen(argv[1], "r");
     if (!f) {
-        fprintf(stderr, "error: could not open %s\n", argv[1]); 
-        return 1; 
+        fprintf(stderr, "error: could not open %s\n", argv[1]);
+        return 1;
     }
 
     err = fscanf(f, "%d", &pt_count);
     if (err != 1 || pt_count <= 0) {
-        fprintf(stderr, "error: invalid point count %d\n", pt_count); 
-        return 1; 
+        fprintf(stderr, "error: invalid point count %d\n", pt_count);
+        return 1;
     }
 
     pts = (Point *)malloc(pt_count*sizeof(Point));
     pt_indices = (GLuint*)malloc(pt_count*sizeof(GLuint));
     if (!pts || !pt_indices) {
         fprintf(stderr, "error: could not allocate memory for points\n");
-        return 1; 
+        return 1;
     }
 
     i = 0;
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
             &pts[i].r, &pts[i].g, &pts[i].b);
 
         if (err != 6) {
-            fprintf(stderr, "warning: invalid point %d ignored\n", i); 
+            fprintf(stderr, "warning: invalid point %d ignored\n", i);
             continue;
         }
 
@@ -120,9 +120,9 @@ int main(int argc, char **argv)
             SDL_GetError());
         return 1;
     }
-     
+
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-     
+
     SDL_Surface* screen = SDL_SetVideoMode(640, 480, 16,
         SDL_OPENGL);
 
@@ -133,15 +133,15 @@ int main(int argc, char **argv)
     }
 
     init();
-   
-    while (!done) { 
+
+    while (!done) {
         while (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_KEYDOWN) { 
-                switch(ev.key.keysym.sym) { 
+            if (ev.type == SDL_KEYDOWN) {
+                switch(ev.key.keysym.sym) {
                     case SDLK_ESCAPE:
                         done = 1;
-                        break; 
-                } 
+                        break;
+                }
             }
         }
 
@@ -152,4 +152,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-

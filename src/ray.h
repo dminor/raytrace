@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,14 +31,14 @@ struct Ray {
     Vec direction;
 
     Ray()
-    { 
+    {
         depth = 0;
-    } 
+    }
 
     Ray(int depth, const Vec &origin, const Vec &direction)
         : depth(depth), origin(origin), direction(direction)
-    { 
-    } 
+    {
+    }
 };
 
 #endif

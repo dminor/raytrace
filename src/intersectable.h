@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,10 @@ struct Intersectable {
 
     virtual ~Intersectable() {
         if (material) delete material;
-    } 
+    }
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const = 0;
 };
 
 #endif
-
-

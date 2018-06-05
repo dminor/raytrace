@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 struct Light {
 
-    float r, g, b; 
+    float r, g, b;
 
     Light() : r(1.0), g(1.0), b(1.0) {};
     virtual ~Light() {};
@@ -36,5 +36,3 @@ struct Light {
 };
 
 #endif
-
-

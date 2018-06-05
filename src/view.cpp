@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ extern "C" {
 
 static int eyepoint(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "eyepoint: expected table");
     }
 
@@ -44,17 +44,17 @@ static int eyepoint(lua_State *ls)
 
     //eyepoint
     lua_getfield(ls, -1, "pos");
-    get_xyz(ls, view->pos.x,view->pos.y, view->pos.z);    
+    get_xyz(ls, view->pos.x,view->pos.y, view->pos.z);
     lua_pop(ls, 1);
 
     //direction
     lua_getfield(ls, -1, "dir");
-    get_xyz(ls, view->dir.x, view->dir.y, view->dir.z);    
+    get_xyz(ls, view->dir.x, view->dir.y, view->dir.z);
     lua_pop(ls, 1);
 
     //up
     lua_getfield(ls, -1, "up");
-    get_xyz(ls, view->up.x, view->up.y, view->up.z);    
+    get_xyz(ls, view->up.x, view->up.y, view->up.z);
     lua_pop(ls, 1);
 
     return 0;
@@ -62,7 +62,7 @@ static int eyepoint(lua_State *ls)
 
 static int image(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "image: expected table");
     }
 
@@ -84,7 +84,7 @@ static int image(lua_State *ls)
 
 static int surface(lua_State *ls)
 {
-    if (!lua_istable(ls, -1)) { 
+    if (!lua_istable(ls, -1)) {
         luaL_error(ls, "surface : expected table");
     }
 
@@ -121,18 +121,18 @@ static luaL_Reg fns[] = {
 View::~View()
 {
 }
- 
+
 bool View::open(const char *filename)
 {
     bool result = true;
- 
-    lua_State *ls = luaL_newstate(); 
+
+    lua_State *ls = luaL_newstate();
     luaL_openlibs(ls);
 
     //register functions in global namespace
     luaL_Reg *fn = fns;
     while (fn->name != 0) {
-        lua_register(ls, fn->name, fn->func); 
+        lua_register(ls, fn->name, fn->func);
         ++fn;
     }
 

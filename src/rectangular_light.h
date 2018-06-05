@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,9 @@ THE SOFTWARE.
 
 struct RectangularLight {
 
-    float r, g, b; 
-    Vec pt1, pt2; 
-    Vec normal; 
+    float r, g, b;
+    Vec pt1, pt2;
+    Vec normal;
 
     RectangularLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~RectangularLight() {};
@@ -37,24 +37,22 @@ struct RectangularLight {
     virtual Ray emit()
     {
         Vec u, v;
-        normal.construct_basis(u, v); 
-        Vec w = Vec::sample_hemisphere_cosine_weighted(); 
-        Vec direction = u*w.x + v*w.y + normal*w.z; 
+        normal.construct_basis(u, v);
+        Vec w = Vec::sample_hemisphere_cosine_weighted();
+        Vec direction = u*w.x + v*w.y + normal*w.z;
 
-        return Ray(0, random_point(), direction); 
-    } 
+        return Ray(0, random_point(), direction);
+    }
 
     virtual Vec random_point()
     {
         double x = pt1.x + (pt2.x - pt1.x)*((double)(rand())/(double)RAND_MAX);
         double y = pt1.y + (pt2.y - pt1.y)*((double)(rand())/(double)RAND_MAX);
         double z = pt1.z + (pt2.z - pt1.z)*((double)(rand())/(double)RAND_MAX);
-    
+
         return Vec(x, y, z);
     }
 
 };
 
 #endif
-
-

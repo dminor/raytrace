@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,16 +25,16 @@ THE SOFTWARE.
 
 struct PointLight {
 
-    float r, g, b; 
-    Vec location; 
+    float r, g, b;
+    Vec location;
 
     PointLight() : r(1.0), g(1.0), b(1.0) {};
     virtual ~PointLight() {};
 
     virtual Ray emit()
-    { 
+    {
         return Ray(0, location, Vec::sample_sphere());
-    } 
+    }
 
     virtual Vec random_point()
     {
@@ -44,5 +44,3 @@ struct PointLight {
 };
 
 #endif
-
-

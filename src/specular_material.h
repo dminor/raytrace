@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Daniel Minor 
+Copyright (c) 2011 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "vec.h"
 
 struct SpecularMaterial : public Material {
- 
+
     SpecularMaterial() {};
 
     virtual ~SpecularMaterial() {};
@@ -43,21 +43,19 @@ struct SpecularMaterial : public Material {
         ray.origin = pt;
         ray.direction = incident.direction - norm*incident.direction.dot(norm)*2.0;
 
-        double tmax = std::numeric_limits<double>::max(); 
+        double tmax = std::numeric_limits<double>::max();
 
         Material *material;
         Vec pt2;
         Vec norm2;
 
         //emit ray
-        if (scene.intersect(ray, 0.1, tmax, pt2, norm2, material)) { 
-            material->shade(scene, ray, pt2, norm2, r, g, b); 
-        } else { 
+        if (scene.intersect(ray, 0.1, tmax, pt2, norm2, material)) {
+            material->shade(scene, ray, pt2, norm2, r, g, b);
+        } else {
             r = g = b = 0.0;
         }
     }
 };
 
 #endif
-
-

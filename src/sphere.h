@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Daniel Minor 
+Copyright (c) 2010 Daniel Minor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ struct Sphere : public Intersectable {
         double disc = d_dot_e_minus_c*d_dot_e_minus_c
             - d_dot_d*(e_minus_c.dot(e_minus_c) - radius*radius);
 
-        if (disc > 0.0) { 
+        if (disc > 0.0) {
             double t = -(ray.direction.dot(e_minus_c) + sqrt(disc))/d_dot_d;
 
             if (t < tmin || t > tmax) return false;
@@ -51,9 +51,9 @@ struct Sphere : public Intersectable {
             return true;
         } else {
             return false;
-        } 
+        }
     }
- 
+
     virtual bool intersect(const Ray &ray, double tmin, double tmax, Vec &pt, Vec &norm, Material *&mat) const
     {
         mat = material;
@@ -62,4 +62,3 @@ struct Sphere : public Intersectable {
 };
 
 #endif
-
