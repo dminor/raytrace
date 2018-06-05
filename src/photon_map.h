@@ -25,7 +25,7 @@ THE SOFTWARE.
 
 #include "vec.h"
 
-#include "kdtree/include/kdtree.h"
+#include "kdtree.h"
 
 struct Scene;
 

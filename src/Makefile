@@ -1,4 +1,4 @@
-INCS = -I../../kdtree/include -I/usr/include/lua5.2
+INCS = -I/usr/include/lua5.2
 LIBS = -lpng -llua5.2
 CFLAGS = -g -O2
 LDFLAGS =
