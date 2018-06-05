@@ -6,6 +6,7 @@ OBJS = lua_functions.o image.o photon_map.o scene.o raytrace.o view.o
 TARGET = ../bin/raytrace
 
 all: $(OBJS)
+	mkdir -p ../bin
 	g++ $(LDFLAGS) $(OBJS) $(LIBS) -o $(TARGET)
 
 .cpp.o:
