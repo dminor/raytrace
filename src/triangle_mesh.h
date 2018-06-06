@@ -51,7 +51,6 @@ struct TriangleMesh : public Intersectable {
         char c;
         Vec pt;
         Face face;
-        size_t i, j, k;
 
         bounds.centre.x = bounds.centre.y = bounds.centre.z = 0.0;
         bounds.radius = 0.0;

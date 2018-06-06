@@ -37,8 +37,8 @@ public:
 
     PriorityQueue(int size)
         : length(0)
-        , size(size)
         , entries(new Entry[size + 1])
+        , size(size)
     {
     }
 
@@ -52,7 +52,7 @@ public:
 
             size_t new_size = size << 1;
             Entry *new_entries = new Entry[new_size + 1];
-            for (int i = 1; i < length; ++i) {
+            for (size_t i = 1; i < length; ++i) {
                 new_entries[i] = entries[i];
             }
 

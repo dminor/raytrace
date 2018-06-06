@@ -37,8 +37,8 @@ public:
 
     FixedSizePriorityQueue(int size)
         : length(0)
-        , size(size)
         , entries(new Entry[size + 1])
+        , size(size)
     {
     }
 
@@ -48,7 +48,7 @@ public:
         //avoid duplicates. this obviously isn't very efficient, but it is
         //still faster than using a std::set for typical sizes.
         //this should be replaced with a custom hash table.
-        for (int i = 1; i <= length; ++i) {
+        for (size_t i = 1; i <= length; ++i) {
             if (entries[i].priority == priority) {
                 return;
             }

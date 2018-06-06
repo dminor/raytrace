@@ -306,9 +306,6 @@ private:
         size_t pivot = start + rand() % (end - start);
         std::swap(pts[pivot], pts[end]);
 
-        //get pivot value
-        Number value = pts[end][coord];
-
         //move values around pivot
         size_t i = start;
         for (size_t j = start; j < end; ++j) {
@@ -432,7 +429,7 @@ private:
 
                     //calculate distance from query point to this point
                     Number distance = 0;
-                    for (int i = 0; i < dim; ++i) {
+                    for (size_t i = 0; i < dim; ++i) {
                         distance += ((*(node->pt))[i]-pt[i]) * ((*(node->pt))[i]-pt[i]);
                     }
 

@@ -1,6 +1,6 @@
 INCS = -I/usr/include/lua5.2
 LIBS = -lpng -llua5.2
-CFLAGS = -g -O2
+CFLAGS = -g -O2 -Wall
 LDFLAGS =
 OBJS = lua_functions.o image.o photon_map.o scene.o raytrace.o view.o
 TARGET = ../bin/raytrace

@@ -104,7 +104,7 @@ int main(int argc, char **argv)
     ray.origin = view.pos;
 
     //intersection material, point and normal
-    Material *material;
+    Material *material = nullptr;
     Vec pt;
     Vec n;
 
@@ -144,7 +144,11 @@ int main(int argc, char **argv)
                         std::numeric_limits<double>::max(), pt, n, material)) {
 
                         float r, g, b;
-                        material->shade(scene, ray, pt, n, r, g, b);
+                        if (material) {
+                            material->shade(scene, ray, pt, n, r, g, b);
+                        } else {
+                            r = g = b = 0.0f;
+                        }
 
                         float scale = 1.0f/(float)(samples*samples);
 
