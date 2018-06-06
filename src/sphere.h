@@ -56,7 +56,7 @@ struct Sphere : public Intersectable {
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax, Vec &pt, Vec &norm, Material *&mat) const
     {
-        mat = material;
+        mat = material.get();
         return intersect(ray, tmin, tmax, pt, norm);
     }
 };

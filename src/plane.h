@@ -48,7 +48,7 @@ struct Plane : public Intersectable {
 
         pt = ray.origin + ray.direction*t;
         norm = normal;
-        mat = material;
+        mat = material.get();
         return true;
     }
 

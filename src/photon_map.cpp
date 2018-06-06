@@ -27,28 +27,18 @@ THE SOFTWARE.
 #include "ray.h"
 
 PhotonMap::PhotonMap()
-    : photons(0), map(0), number_emitted(0)
+    : photons(nullptr), map(nullptr), number_emitted(0)
 {
-}
-
-PhotonMap::~PhotonMap()
-{
-    if (map) delete map;
-    if (photons) delete[] photons;
 }
 
 void PhotonMap::build(const Scene &scene, int nphotons,
     bool include_direct_lighting, int max_depth)
 {
-    photons = new Photon[nphotons];
+    photons.reset(new Photon[nphotons]);
     this->nphotons = nphotons;
 
-    Light *light;
-
     //assume one light per scene for now
-    for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
-        light = *itor;
-    }
+    Light *light = scene.lights.begin()->get();
 
     int i = 0;
     while (i < nphotons) {
@@ -127,7 +117,7 @@ void PhotonMap::build(const Scene &scene, int nphotons,
         }
     }
 
-    map = new KdTree<Photon, double>(3, photons, nphotons);
+    map.reset(new KdTree<Photon, double>(3, photons.get(), nphotons));
 }
 
 void PhotonMap::query(const Vec &pt, const Vec &norm, int nphotons, double eps,

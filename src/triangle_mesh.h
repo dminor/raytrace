@@ -112,7 +112,7 @@ struct TriangleMesh : public Intersectable {
                         closest_distance = distance;
                         pt = temp_pt;
                         norm = temp_norm;
-                        mat = material;
+                        mat = material.get();
                     }
                 }
             }

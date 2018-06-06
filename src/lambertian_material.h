@@ -45,12 +45,8 @@ struct LambertianMaterial : public Material {
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
         const Vec &norm, float &r, float &g, float &b)
     {
-        Light *light;
-
         //assume one light per scene for now
-        for (std::vector<Light *>::const_iterator itor = scene.lights.begin(); itor != scene.lights.end(); ++itor) {
-            light = *itor;
-        }
+        Light *light = scene.lights.begin()->get();
 
         //shadow
         Ray shadow_r;

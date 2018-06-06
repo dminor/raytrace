@@ -24,6 +24,7 @@ THE SOFTWARE.
 #define FIXED_SIZE_PRIORITY_QUEUE_H_
 
 #include <cstdlib>
+#include <memory>
 
 template<class T> class FixedSizePriorityQueue {
 
@@ -34,15 +35,11 @@ public:
         T data;
     };
 
-    FixedSizePriorityQueue(int size) : length(0), size(size)
+    FixedSizePriorityQueue(int size)
+        : length(0)
+        , size(size)
+        , entries(new Entry[size + 1])
     {
-        //need room for dummy entries[0]
-        entries = new Entry[size + 1];
-    }
-
-    virtual ~FixedSizePriorityQueue()
-    {
-        delete[] entries;
     }
 
     void push(double priority, const T &data)
@@ -104,7 +101,7 @@ public:
 
 private:
 
-    Entry *entries;
+    std::unique_ptr<Entry[]> entries;
     size_t size;
 
     void heapify(size_t i)

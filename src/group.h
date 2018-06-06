@@ -24,30 +24,26 @@ THE SOFTWARE.
 #define GROUP_H_
 
 #include <limits>
+#include <memory>
 #include <vector>
 
 #include "intersectable.h"
 
 struct Group : public Intersectable {
 
-    std::vector<Intersectable *> children;
-
-    virtual ~Group() {
-        for (std::vector<Intersectable *>::iterator itor = children.begin(); itor != children.end(); ++itor) {
-            delete *itor;
-        }
-    };
+    std::vector<std::unique_ptr<Intersectable> > children;
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const
     {
         bool hit = false;
         double closest_distance = std::numeric_limits<double>::max();
-        for (std::vector<Intersectable *>::const_iterator itor = children.begin(); itor != children.end(); ++itor) {
+        for (auto& child: children) {
             Vec temp_pt;
             Vec temp_norm;
             Material *temp_mat;
-            if ((*itor)->intersect(ray, tmin, tmax, temp_pt, temp_norm, temp_mat)) {
+            if (child->intersect(ray, tmin, tmax,
+                                 temp_pt, temp_norm, temp_mat)) {
                 hit = true;
                 Vec dist_vec = temp_pt - ray.origin;
                 double distance = dist_vec.dot(dist_vec);

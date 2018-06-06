@@ -23,6 +23,8 @@ THE SOFTWARE.
 #ifndef INTERSECTABLE_H_
 #define INTERSECTABLE_H_
 
+#include <memory>
+
 #include "material.h"
 #include "ray.h"
 #include "vec.h"
@@ -31,13 +33,9 @@ const double INTERSECTION_EPSILON = 0.00001;
 
 struct Intersectable {
 
-    Material *material;
+    std::unique_ptr<Material> material;
 
-    Intersectable() : material(0) {};
-
-    virtual ~Intersectable() {
-        if (material) delete material;
-    }
+    Intersectable() : material(nullptr) {};
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const = 0;

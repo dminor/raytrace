@@ -73,7 +73,7 @@ static int group(lua_State *ls)
     while (lua_next(ls, -2)) {
         Intersectable *i = reinterpret_cast<Intersectable *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
-        group->children.push_back(i);
+        group->children.push_back(std::unique_ptr<Intersectable>(i));
     }
     lua_pop(ls, 1);
 
@@ -160,7 +160,7 @@ static int plane(lua_State *ls)
     Plane *plane = new Plane;
     plane->p.x = pt_x; plane->p.y = pt_y; plane->p.z = pt_z;
     plane->normal.x = norm_x; plane->normal.y = norm_y; plane->normal.z = norm_z;
-    plane->material = mat;
+    plane->material.reset(mat);
     lua_pushlightuserdata(ls, plane);
 
     return 1;
@@ -236,7 +236,7 @@ static int scene(lua_State *ls)
     while (lua_next(ls, -2)) {
         Light *light = reinterpret_cast<Light *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
-        scene->lights.push_back(light);
+        scene->lights.push_back(std::unique_ptr<Light>(light));
     }
     lua_pop(ls, 1);
 
@@ -245,7 +245,7 @@ static int scene(lua_State *ls)
     while (lua_next(ls, -2)) {
         Intersectable *i = reinterpret_cast<Intersectable *>(lua_touserdata(ls, -1));
         lua_pop(ls, 1);
-        scene->children.push_back(i);
+        scene->children.push_back(std::unique_ptr<Intersectable>(i));
     }
     lua_pop(ls, 1);
 
@@ -287,7 +287,7 @@ static int sphere(lua_State *ls)
     Sphere *sphere = new Sphere;
     sphere->centre.x = x; sphere->centre.y = y; sphere->centre.z = z;
     sphere->radius = radius;
-    sphere->material = mat;
+    sphere->material.reset(mat);
     lua_pushlightuserdata(ls, sphere);
 
     return 1;
@@ -309,10 +309,9 @@ static int transform(lua_State *ls)
     lua_getfield(ls, -1, "rotation");
     lua_pushnil(ls);
     while (lua_next(ls, -2)) {
-        Quat *q = reinterpret_cast<Quat *>(lua_touserdata(ls, -1));
+        std::unique_ptr<Quat> q(reinterpret_cast<Quat *>(lua_touserdata(ls, -1)));
         lua_pop(ls, 1);
         rotation = rotation * *q;
-        delete(q);
     }
     lua_pop(ls, 1);
 
@@ -347,7 +346,7 @@ static int trimesh(lua_State *ls)
 
     TriangleMesh *obj = new TriangleMesh;
     obj->open(filename);
-    obj->material = mat;
+    obj->material.reset(mat);
 
     lua_pushlightuserdata(ls, obj);
 
@@ -369,12 +368,6 @@ static luaL_Reg fns[] = {
     {"trimesh", trimesh},
     {0, 0}
 };
-
-Scene::~Scene() {
-    for (std::vector<Light *>::iterator itor = lights.begin(); itor != lights.end(); ++itor) {
-        delete *itor;
-    }
-}
 
 bool Scene::open(const char *filename)
 {

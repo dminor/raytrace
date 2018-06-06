@@ -23,9 +23,10 @@ THE SOFTWARE.
 #ifndef PHOTON_MAP_H_
 #define PHOTON_MAP_H_
 
-#include "vec.h"
+#include <memory>
 
 #include "kdtree.h"
+#include "vec.h"
 
 struct Scene;
 
@@ -55,15 +56,14 @@ class PhotonMap {
         }
     };
 
-    Photon *photons;
+    std::unique_ptr<Photon[]> photons;
     int nphotons;
-    KdTree<Photon, double> *map;
+    std::unique_ptr<KdTree<Photon, double> > map;
     int number_emitted;
 
 public:
 
     PhotonMap();
-    virtual ~PhotonMap();
 
     void build(const Scene &scene, int nphotons,
         bool include_direct_lighting, int max_depth);

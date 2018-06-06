@@ -23,19 +23,19 @@ THE SOFTWARE.
 #ifndef SCENE_H_
 #define SCENE_H_
 
+#include <memory>
+
 #include "group.h"
 #include "light.h"
 #include "photon_map.h"
 
 struct Scene : public Group {
 
-    std::vector<Light *> lights;
+    std::vector<std::unique_ptr<Light> > lights;
     PhotonMap photon_map;
 
     bool use_photon_map;
     int query_photons;
-
-    virtual ~Scene();
 
     bool open(const char *filename);
 

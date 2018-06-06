@@ -24,6 +24,7 @@ THE SOFTWARE.
 #define PRIORITY_QUEUE_H_
 
 #include <cstdlib>
+#include <memory>
 
 template<class T> class PriorityQueue {
 
@@ -34,15 +35,11 @@ public:
         T data;
     };
 
-    PriorityQueue(int size) : length(0), size(size)
+    PriorityQueue(int size)
+        : length(0)
+        , size(size)
+        , entries(new Entry[size + 1])
     {
-        //need room for dummy entries[0]
-        entries = new Entry[size + 1];
-    }
-
-    virtual ~PriorityQueue()
-    {
-        delete[] entries;
     }
 
     void push(double priority, const T &data)
@@ -59,8 +56,7 @@ public:
                 new_entries[i] = entries[i];
             }
 
-            delete[] entries;
-            entries = new_entries;
+            entries.reset(new_entries);
             size = new_size;
         }
 
@@ -101,21 +97,11 @@ public:
         length = 0;
     }
 
-    void operator=(const PriorityQueue &other)
-    {
-        if (size < other.size) {
-            delete[] entries;
-            entries = new Entry[other.size];
-        }
-
-        memcpy(entries, other.entries, (other.length + 1)*sizeof(Entry));
-    }
-
     size_t length;
 
 private:
 
-    Entry *entries;
+    std::unique_ptr<Entry[]> entries;
     size_t size;
 
     void heapify(size_t i)
@@ -143,4 +129,3 @@ private:
 };
 
 #endif
-
