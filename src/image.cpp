@@ -22,6 +22,7 @@ THE SOFTWARE.
 
 #include "image.h"
 
+#include <cmath>
 #include <cstdio>
 
 void clamp(float &v, float min, float max)
@@ -54,9 +55,9 @@ void Image::set(size_t x, size_t y, float r, float g, float b)
         clamp(g, 0.0, 1.0);
         clamp(b, 0.0, 1.0);
 
-        rows[y][x*3] = (png_byte)(r * 255.0);
-        rows[y][x*3 + 1] = (png_byte)(g * 255.0);
-        rows[y][x*3 + 2] = (png_byte)(b * 255.0);
+        rows[y][x*3] = (png_byte)(sqrt(r) * 255.0);
+        rows[y][x*3 + 1] = (png_byte)(sqrt(g) * 255.0);
+        rows[y][x*3 + 2] = (png_byte)(sqrt(b) * 255.0);
     }
 }
 
