@@ -49,11 +49,14 @@ struct DielectricMaterial : public Material {
         if (root < 0.0) {
             r = g = b = 1.0;
         } else {
-
             if ((double)rand() /(double)RAND_MAX < 0.25) {
-
                 //reflection
                 Ray ray;
+                ray.depth = incident.depth + 1;
+                if (ray.depth_exceeded()) {
+                    return;
+                }
+
                 ray.origin = pt;
                 ray.direction = incident.direction - norm*incident.direction.dot(norm)*2.0;
 
@@ -74,9 +77,13 @@ struct DielectricMaterial : public Material {
                 g *= 0.25;
                 b *= 0.25;
             } else {
-
                 //refraction
                 Ray ray;
+                ray.depth = incident.depth + 1;
+                if (ray.depth_exceeded()) {
+                    return;
+                }
+
                 ray.origin = pt;
                 ray.direction = (incident.direction - norm*d_dot_n)*(1.0/nt)
                     - norm*root;

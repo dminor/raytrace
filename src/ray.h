@@ -39,6 +39,14 @@ struct Ray {
         : depth(depth), origin(origin), direction(direction)
     {
     }
+
+    bool depth_exceeded()
+    {
+        if (depth > 50) {
+            return true;
+        }
+        return false;
+    }
 };
 
 #endif

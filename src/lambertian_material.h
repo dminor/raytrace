@@ -45,45 +45,36 @@ struct LambertianMaterial : public Material {
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
         const Vec &norm, float &r, float &g, float &b)
     {
-        //assume one light per scene for now
-        Light *light = scene.lights.begin()->get();
-
-        //shadow
-        Ray shadow_r;
-        shadow_r.origin = pt;
-        shadow_r.direction = light->random_point() - pt;
-        double tmax = shadow_r.direction.magnitude();
-        shadow_r.direction.normalize();
-
-        //dummy values
-        Vec d;
-        Material *d_mat;
-
-        //emit shadow ray
-        if (scene.intersect(shadow_r, 0.1, tmax, d, d, d_mat)) {
-            r = g = b = 0.0;
-        } else {
-            double c = norm.dot(shadow_r.direction);
-            if (c < 0.0) c = 0.0;
-            if (c > 1.0) c = 1.0;
-
-            double attenuation = 1.0 / (tmax*tmax);
-
-            r = light->r*this->r*c*attenuation*reflectivity;
-            g = light->g*this->g*c*attenuation*reflectivity;
-            b = light->b*this->b*c*attenuation*reflectivity;
+        Ray ray;
+        ray.depth = incident.depth + 1;
+        if (ray.depth_exceeded()) {
+            r = g = b = 0.0f;
+            return;
         }
 
-        // contribution from indirect lighting
-        if (scene.use_photon_map) {
-            float indirect_r, indirect_g, indirect_b;
-            scene.photon_map.query(pt, norm, scene.query_photons, 0.0,
-                indirect_r, indirect_g, indirect_b);
+        ray.origin = pt;
 
-            r += indirect_r;
-            g += indirect_g;
-            b += indirect_b;
+        Vec u, v;
+        norm.construct_basis(u, v);
+        Vec w = Vec::sample_hemisphere_cosine_weighted();
+        ray.direction = u*w.x + v*w.y + norm*w.z;
+        ray.direction.normalize();
+
+        Vec ipt;
+        Vec inorm;
+        float ir, ig, ib;
+        Material *material;
+        ir = ig = ib = 0.0;
+        if (scene.intersect(ray, 0.001, std::numeric_limits<double>::max(),
+                            ipt, inorm, material)) {
+            if (material) {
+                material->shade(scene, ray, ipt, inorm, ir, ig, ib);
+            }
         }
+
+        r = this->r*ir*reflectivity;
+        g = this->g*ig*reflectivity;
+        b = this->b*ib*reflectivity;
     }
 };
 

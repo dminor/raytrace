@@ -179,7 +179,7 @@ struct Vec {
     }
 
     //construct non-unique orthonormal basis from this vector
-    void construct_basis(Vec &u, Vec &v)
+    void construct_basis(Vec &u, Vec &v) const
     {
         Vec n(1.0, 0.0, 0.0);
         Vec m(0.0, 1.0, 0.0);

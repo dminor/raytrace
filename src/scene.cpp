@@ -30,6 +30,7 @@ extern "C" {
 #include <cstdio>
 
 #include "dielectric_material.h"
+#include "diffuse_material.h"
 #include "lambertian_material.h"
 #include "material.h"
 #include "plane.h"
@@ -60,6 +61,35 @@ static int dielectric(lua_State *ls)
 
     return 1;
 }
+
+static int diffuse(lua_State *ls)
+{
+    if (!lua_istable(ls, -1)) {
+        luaL_error(ls, "diffuse: expected table");
+    }
+
+    double r, g, b;
+
+    lua_getfield(ls, -1, "r");
+    r = luaL_checknumber(ls, -1);
+    lua_pop(ls, 1);
+
+    lua_getfield(ls, -1, "g");
+    g = luaL_checknumber(ls, -1);
+    lua_pop(ls, 1);
+
+    lua_getfield(ls, -1, "b");
+    b = luaL_checknumber(ls, -1);
+    lua_pop(ls, 1);
+
+    DiffuseMaterial *mat = new DiffuseMaterial;
+    mat->r = r; mat->g = g; mat->b = b;
+    lua_pushlightuserdata(ls, mat);
+
+    return 1;
+}
+
+
 static int group(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) {
@@ -355,6 +385,7 @@ static int trimesh(lua_State *ls)
 
 static luaL_Reg fns[] = {
     {"dielectric", dielectric},
+    {"diffuse", diffuse},
     {"group", group},
     {"lambertian", lambertian},
     {"pointlight", pointlight},
