@@ -25,16 +25,12 @@ THE SOFTWARE.
 
 #include <cstdlib>
 
-struct RectangularLight {
+struct RectangularLight : public Light {
 
-    float r, g, b;
     Vec pt1, pt2;
     Vec normal;
 
-    RectangularLight() : r(1.0), g(1.0), b(1.0) {};
-    virtual ~RectangularLight() {};
-
-    virtual Ray emit()
+    Ray emit() override
     {
         Vec u, v;
         normal.construct_basis(u, v);
@@ -44,7 +40,7 @@ struct RectangularLight {
         return Ray(0, random_point(), direction);
     }
 
-    virtual Vec random_point()
+    Vec random_point() override
     {
         double x = pt1.x + (pt2.x - pt1.x)*((double)(rand())/(double)RAND_MAX);
         double y = pt1.y + (pt2.y - pt1.y)*((double)(rand())/(double)RAND_MAX);

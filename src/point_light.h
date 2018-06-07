@@ -23,24 +23,19 @@ THE SOFTWARE.
 #ifndef POINT_LIGHT_H_
 #define POINT_LIGHT_H_
 
-struct PointLight {
+struct PointLight : public Light {
 
-    float r, g, b;
     Vec location;
 
-    PointLight() : r(1.0), g(1.0), b(1.0) {};
-    virtual ~PointLight() {};
-
-    virtual Ray emit()
+    Ray emit() override
     {
         return Ray(0, location, Vec::sample_sphere());
     }
 
-    virtual Vec random_point()
+    Vec random_point() override
     {
         return location;
     }
-
 };
 
 #endif
