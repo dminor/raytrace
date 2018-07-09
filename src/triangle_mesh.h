@@ -38,58 +38,8 @@ struct TriangleMesh : public Intersectable {
         Vec normal;
     };
 
-    Sphere bounds;
-
     std::vector<Vec> vertices;
     std::vector<Face> faces;
-
-    bool open(const char *filename)
-    {
-        std::ifstream f(filename);
-        if (!f) return false;
-
-        char c;
-        Vec pt;
-        Face face;
-
-        bounds.centre.x = bounds.centre.y = bounds.centre.z = 0.0;
-        bounds.radius = 0.0;
-
-        while (!f.eof()) {
-            f >> c;
-
-            if (c == 'v') {
-                f >> pt.x;
-                f >> pt.y;
-                f >> pt.z;
-
-                if (fabs(pt.x) > bounds.radius) bounds.radius = fabs(pt.x);
-                if (fabs(pt.y) > bounds.radius) bounds.radius = fabs(pt.y);
-                if (fabs(pt.z) > bounds.radius) bounds.radius = fabs(pt.z);
-
-                vertices.push_back(pt);
-            } else if (c == 'f') {
-                f >> face.i; face.i -= 1;
-                f >> face.j; face.j -= 1;
-                f >> face.k; face.k -= 1;
-
-                //calculate normal
-                Vec ab = vertices[face.j] - vertices[face.i];
-                Vec ac = vertices[face.k] - vertices[face.i];
-                face.normal = ab.cross(ac);
-
-                faces.push_back(face);
-
-            } else {
-                //ignore groups, materials, etc. for now
-            }
-
-        }
-
-        f.close();
-
-        return true;
-    }
 
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const
@@ -97,22 +47,19 @@ struct TriangleMesh : public Intersectable {
         bool hit = false;
         double closest_distance = std::numeric_limits<double>::max();
 
-        if (bounds.intersect(ray, tmin, tmax, pt, norm)) {
-            for (std::vector<Face>::const_iterator itor = faces.begin();
-                    itor != faces.end(); ++itor) {
-                Vec temp_pt;
-                Vec temp_norm;
-                if (intersect_face(ray, tmin, tmax, *itor, temp_pt, temp_norm)) {
-                    hit = true;
+        for (auto& face : faces) {
+            Vec temp_pt;
+            Vec temp_norm;
+            if (intersect_face(ray, tmin, tmax, face, temp_pt, temp_norm)) {
+                hit = true;
 
-                    Vec dist_vec = temp_pt - ray.origin;
-                    double distance = dist_vec.dot(dist_vec);
-                    if (distance < closest_distance) {
-                        closest_distance = distance;
-                        pt = temp_pt;
-                        norm = temp_norm;
-                        mat = material.get();
-                    }
+                Vec dist_vec = temp_pt - ray.origin;
+                double distance = dist_vec.dot(dist_vec);
+                if (distance < closest_distance) {
+                    closest_distance = distance;
+                    pt = temp_pt;
+                    norm = temp_norm;
+                    mat = material.get();
                 }
             }
         }

@@ -49,5 +49,14 @@ scene {
             radius=1.5,
             material=dielectric{nt=1.6}
         },
+        trimesh{
+            vertices={{x=-0.2, y=9.9, z=-4.8},
+                      {x=0.2, y=9.9, z=-4.8},
+                      {x=0.2, y=9.9, z=-5.2},
+                      {x=-0.2, y=9.9, z=-5.2}},
+            faces={{i=0, j=1, k=2},
+                   {i=0, j=2, k=3}},
+            material=diffuse{r=100.0, g=100.0, b=100.0}
+        },
     }
 }

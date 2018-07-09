@@ -366,19 +366,54 @@ static int trimesh(lua_State *ls)
         luaL_error(ls, "trimesh: expected table");
     }
 
-    lua_getfield(ls, -1, "filename");
-    const char *filename = luaL_checkstring(ls, -1);
+    std::vector<Vec> vertices;
+    lua_getfield(ls, -1, "vertices");
+    lua_pushnil(ls);
+    while (lua_next(ls, -2) != 0) {
+        double x, y, z;
+        get_xyz(ls, x, y, z);
+        vertices.push_back(Vec{x, y, z});
+        lua_pop(ls, 1);
+    }
+    lua_pop(ls, 1);
+
+    std::vector<TriangleMesh::Face> faces;
+    lua_getfield(ls, -1, "faces");
+    lua_pushnil(ls);
+    while (lua_next(ls, -2) != 0) {
+        size_t i, j, k;
+        lua_getfield(ls, -1, "i");
+        i = static_cast<size_t>(luaL_checknumber(ls, -1));
+        lua_pop(ls, 1);
+
+        lua_getfield(ls, -1, "j");
+        j = static_cast<size_t>(luaL_checknumber(ls, -1));
+        lua_pop(ls, 1);
+
+        lua_getfield(ls, -1, "k");
+        k = static_cast<size_t>(luaL_checknumber(ls, -1));
+        lua_pop(ls, 1);
+
+        Vec ab = vertices[j] - vertices[i];
+        Vec ac = vertices[k] - vertices[i];
+        Vec norm = ab.cross(ac);
+        norm.normalize();
+
+        faces.push_back(TriangleMesh::Face{i, j, k, norm});
+        lua_pop(ls, 1);
+    }
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "material");
     Material *mat = reinterpret_cast<Material *>(lua_touserdata(ls, -1));
     lua_pop(ls, 1);
 
-    TriangleMesh *obj = new TriangleMesh;
-    obj->open(filename);
-    obj->material.reset(mat);
+    TriangleMesh *tm = new TriangleMesh;
+    tm->faces = std::move(faces);
+    tm->vertices = std::move(vertices);
+    tm->material.reset(mat);
 
-    lua_pushlightuserdata(ls, obj);
+    lua_pushlightuserdata(ls, tm);
 
     return 1;
 }
