@@ -38,7 +38,7 @@ struct Material {
     }
 
     virtual void shade(const Scene &scene, const Ray &incident,
-        const Vec &pt, const Vec &norm, float &r, float &g, float &b) = 0;
+        const Vec &pt, const Vec &norm, float &r, float &g, float &b) const = 0;
 };
 
 #endif

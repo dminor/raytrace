@@ -32,7 +32,7 @@ struct DiffuseMaterial : public Material {
     float r, g, b;
 
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
-        const Vec &norm, float &r, float &g, float &b)
+        const Vec &norm, float &r, float &g, float &b) const override
     {
         r = this->r;
         g = this->g;

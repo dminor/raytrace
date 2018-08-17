@@ -43,7 +43,7 @@ struct LambertianMaterial : public Material {
     }
 
     void shade(const Scene &scene, const Ray &incident, const Vec &pt,
-        const Vec &norm, float &r, float &g, float &b)
+        const Vec &norm, float &r, float &g, float &b) const override
     {
         Ray ray;
         ray.depth = incident.depth + 1;
