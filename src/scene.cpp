@@ -34,9 +34,7 @@ extern "C" {
 #include "lambertian_material.h"
 #include "material.h"
 #include "plane.h"
-#include "point_light.h"
 #include "quat.h"
-#include "rectangular_light.h"
 #include "scene.h"
 #include "specular_material.h"
 #include "sphere.h"
@@ -143,29 +141,6 @@ static int lambertian(lua_State *ls)
     return 1;
 }
 
-static int pointlight(lua_State *ls)
-{
-    if (!lua_istable(ls, -1)) {
-        luaL_error(ls, "pointlight: expected table");
-    }
-
-    lua_getfield(ls, -1, "radiance");
-    double r, g, b;
-    get_rgb(ls, r, g, b);
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "location");
-    double x, y, z;
-    get_xyz(ls, x, y, z);
-
-    PointLight *light = new PointLight;
-    light->r = r; light->g = g; light->b = b;
-    light->location.x = x; light->location.y = y; light->location.z = z;
-    lua_pushlightuserdata(ls, light);
-
-    return 1;
-}
-
 static int plane(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) {
@@ -215,41 +190,6 @@ static int quat(lua_State *ls)
     return 1;
 }
 
-static int rectangularlight(lua_State *ls)
-{
-    if (!lua_istable(ls, -1)) {
-        luaL_error(ls, "rectangularlight: expected table");
-    }
-
-    lua_getfield(ls, -1, "radiance");
-    double r, g, b;
-    get_rgb(ls, r, g, b);
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "pt1");
-    double x1, y1, z1;
-    get_xyz(ls, x1, y1, z1);
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "pt2");
-    double x2, y2, z2;
-    get_xyz(ls, x2, y2, z2);
-    lua_pop(ls, 1);
-
-    lua_getfield(ls, -1, "normal");
-    double xn, yn, zn;
-    get_xyz(ls, xn, yn, zn);
-    lua_pop(ls, 1);
-
-    RectangularLight *light = new RectangularLight;
-    light->r = r; light->g = g; light->b = b;
-    light->pt1.x = x1; light->pt1.y = y1; light->pt1.z = z1;
-    light->pt2.x = x2; light->pt2.y = y2; light->pt2.z = z2;
-    light->normal.x = xn; light->normal.y = yn; light->normal.z = zn;
-    lua_pushlightuserdata(ls, light);
-
-    return 1;
-}
 static int scene(lua_State *ls)
 {
     if (!lua_istable(ls, -1)) {
@@ -261,13 +201,16 @@ static int scene(lua_State *ls)
     Scene *scene = reinterpret_cast<Scene *>(lua_touserdata(ls, -1));
     lua_pop(ls, 1);
 
-    lua_getfield(ls, -1, "lights");
-    lua_pushnil(ls);
-    while (lua_next(ls, -2)) {
-        Light *light = reinterpret_cast<Light *>(lua_touserdata(ls, -1));
-        lua_pop(ls, 1);
-        scene->lights.push_back(std::unique_ptr<Light>(light));
-    }
+    lua_getfield(ls, -1, "r");
+    scene->r = luaL_checknumber(ls, -1);
+    lua_pop(ls, 1);
+
+    lua_getfield(ls, -1, "g");
+    scene->g = luaL_checknumber(ls, -1);
+    lua_pop(ls, 1);
+
+    lua_getfield(ls, -1, "b");
+    scene->b = luaL_checknumber(ls, -1);
     lua_pop(ls, 1);
 
     lua_getfield(ls, -1, "children");
@@ -423,10 +366,8 @@ static luaL_Reg fns[] = {
     {"diffuse", diffuse},
     {"group", group},
     {"lambertian", lambertian},
-    {"pointlight", pointlight},
     {"plane", plane},
     {"quat", quat},
-    {"rectangularlight", rectangularlight},
     {"scene", scene},
     {"specular", specular},
     {"sphere", sphere},

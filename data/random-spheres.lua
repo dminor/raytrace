@@ -44,11 +44,8 @@ spheres[i] = sphere{
 }
 
 scene {
-    lights={
-        pointlight{
-            radiance={r=100000.0, g=100000.0, b=100000.0},
-            location={x=0.0, y=10.0, z=-10.0},
-        },
-    },
+    r=0.5,
+    g=0.5,
+    b=0.5,
     children=spheres
 }

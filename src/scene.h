@@ -26,12 +26,11 @@ THE SOFTWARE.
 #include <memory>
 
 #include "group.h"
-#include "light.h"
 #include "photon_map.h"
 
 struct Scene : public Group {
 
-    std::vector<std::unique_ptr<Light> > lights;
+    float r, g, b;
     PhotonMap photon_map;
 
     bool use_photon_map;

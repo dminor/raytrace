@@ -13,11 +13,12 @@ To do:
 * Mode to only use photon mapping for indirect lighting.
 * Look at ray propagation for Lambertian materials.
 * Look at separate caustic photon map.
-* Spherical light sources.  
+* Spherical light sources.
 * Textures.
 * Take another look at dielectric implementation.
 
-The design and implementation were influenced by the following books:
+When I first started working on this in 2010/2011, the design and
+implementation were influenced by the following books:
 
 Ericson, C. (2005) Real-Time Collision Detection, Morgan Kauffman,
 San Francisco, CA
@@ -26,5 +27,11 @@ Jansen, H. W. (2001) Realistic Image Synthesis Using Photon Mapping,
 2nd Edition, A K Peters, Natick, MA
 
 Shirley, P. and Morley, R. K. (2003) Realistic Ray Tracing, 2nd Edition,
-A K Peters, Natick, MA 
+A K Peters, Natick, MA
 
+When I started working on this again in 2018, the following books were quite
+helpful:
+
+Shirley, P. (2016) Ray Tracing in One Weekend
+Shirley, P. (2016) Ray Tracing: The Next Week
+Shirley, P. (2016) Ray Tracing: The Rest of Your Life

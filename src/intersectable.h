@@ -37,6 +37,11 @@ struct Intersectable {
 
     Intersectable() : material(nullptr) {};
 
+    virtual Ray emit()
+    {
+        return Ray();
+    }
+
     virtual bool intersect(const Ray &ray, double tmin, double tmax,
         Vec &pt, Vec &norm, Material *&mat) const = 0;
 };

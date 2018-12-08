@@ -24,7 +24,6 @@ THE SOFTWARE.
 #define VIEW_H_
 
 #include "group.h"
-#include "light.h"
 
 struct View {
 

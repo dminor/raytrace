@@ -1,13 +1,10 @@
 --
--- Test scene with all supported features
+-- Test scene for path tracing
 --
 scene {
-    lights={
-        pointlight{
-            radiance={r=100000.0, g=100000.0, b=100000.0},
-            location={x=0.0, y=10.0, z=0.0},
-        },
-    },
+    r=0,
+    g=0,
+    b=0,
     children={
         sphere{
             centre={x=0, y=-1000, z=0},

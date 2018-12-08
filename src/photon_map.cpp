@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 #include <cstdio>
 
+#include "material.h"
+#include "diffuse_material.h"
 #include "lambertian_material.h"
 #include "photon_map.h"
 #include "ray.h"
@@ -38,7 +40,19 @@ void PhotonMap::build(const Scene &scene, int nphotons,
     this->nphotons = nphotons;
 
     //assume one light per scene for now
-    Light *light = scene.lights.begin()->get();
+    Intersectable *light = nullptr;
+    float light_r = 0.0, light_g = 0.0, light_b = 0.0;
+    for (auto& child: scene.children) {
+        if (child->material && child->material->isDiffuse()) {
+            light = child.get();
+            DiffuseMaterial *dm;
+            dm = static_cast<DiffuseMaterial *>(light->material.get());
+            light_r = dm->r;
+            light_g = dm->g;
+            light_b = dm->b;
+            break;
+        }
+    }
 
     int i = 0;
     while (i < nphotons) {
@@ -47,9 +61,9 @@ void PhotonMap::build(const Scene &scene, int nphotons,
         Ray ray = light->emit();
         bool in_scene = true;
         float R, G, B;
-        R = light->r;
-        G = light->g;
-        B = light->b;
+        R = light_r;
+        G = light_g;
+        B = light_b;
 
         while (in_scene && ray.depth < max_depth) {
             Vec pt, n;

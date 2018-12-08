@@ -32,7 +32,12 @@ struct Material {
 
     virtual ~Material() {};
 
-    virtual bool isLambertian()
+    virtual bool isDiffuse() const
+    {
+        return false;
+    }
+
+    virtual bool isLambertian() const
     {
         return false;
     }

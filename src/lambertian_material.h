@@ -48,7 +48,9 @@ struct LambertianMaterial : public Material {
         Ray ray;
         ray.depth = incident.depth + 1;
         if (ray.depth_exceeded()) {
-            r = g = b = 0.0f;
+            r = scene.r;
+            g = scene.g;
+            b = scene.b;
             return;
         }
 
@@ -64,7 +66,9 @@ struct LambertianMaterial : public Material {
         Vec inorm;
         float ir, ig, ib;
         Material *material;
-        ir = ig = ib = 0.0;
+        ir = scene.r;
+        ig = scene.g;
+        ib = scene.b;
         if (scene.intersect(ray, 0.001, std::numeric_limits<double>::max(),
                             ipt, inorm, material)) {
             if (material) {
