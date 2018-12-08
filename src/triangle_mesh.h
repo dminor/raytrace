@@ -67,47 +67,45 @@ struct TriangleMesh : public Intersectable {
         return hit;
     }
 
-    // From Ericson, C. (2005) Real-Time Collision Detection, Morgan Kauffman,
-    // San Francisco, CA, pp. 190 - 192
+    // From Shirley, P. et al (2009) Fundamentals of Computer Graphics, 3rd edition
+    // A K Peters, Nattick, MA, pp. 77 - 80
     virtual bool intersect_face(const Ray &ray, double tmin, double tmax,
-        const Face &f, Vec &pt, Vec &norm) const
+        const Face &face, Vec &pt, Vec &norm) const
     {
-        const Vec &a = vertices[f.i];
-        const Vec &b = vertices[f.j];
-        const Vec &c = vertices[f.k];
+        const Vec &A = vertices[face.i];
+        const Vec &B = vertices[face.j];
+        const Vec &C = vertices[face.k];
 
-        Vec ab = b - a;
-        Vec ac = c - a;
+        const Vec ab = A - B;
+        const Vec ac = A - C;
+        const Vec ao = A - ray.origin;
 
-        Vec qp;
-        qp.x=-ray.direction.x;
-        qp.y=-ray.direction.y;
-        qp.z=-ray.direction.z;
+        double M = ab.x*(ac.y*ray.direction.z - ray.direction.y*ac.z) +
+                   ab.y*(ray.direction.x*ac.z - ac.x*ray.direction.z) +
+                   ac.z*(ac.x*ray.direction.y - ac.y*ray.direction.x);
+        double t = (ac.z*(ab.x*ao.y - ao.x*ab.y) +
+                    ac.y*(ao.x*ab.z - ab.x*ao.z) +
+                    ac.x*(ab.y*ao.z - ao.y*ab.y))/-M;
+        if (t < tmin || t > tmax) {
+            return false;
+        }
 
-        double d = qp.dot(f.normal);
-        if (d < 0.0) return false;
+        double gamma = (ray.direction.z*(ab.x*ao.y - ao.x*ab.y) +
+                        ray.direction.y*(ao.x*ab.z - ab.x*ao.z) +
+                        ray.direction.x*(ab.y*ao.z - ao.y*ab.z))/M;
+        if (gamma < 0 || gamma > 1) {
+            return false;
+        }
 
-        Vec ap = ray.origin - a;
-        double t = ap.dot(f.normal);
-        if (t < 0.0) return false;
+        double beta = (ao.x*(ac.y*ray.direction.z - ray.direction.y*ac.z) +
+                       ao.y*(ray.direction.x*ac.z - ac.x*ray.direction.z) +
+                       ao.z*(ac.x*ray.direction.y - ac.y*ray.direction.x))/M;
+        if (beta < 0 || beta > (1 - gamma)) {
+            return false;
+        }
 
-        Vec e = qp.cross(ap);
-        double v = ac.dot(e);
-        if (v < 0.0 || v > d) return false;
-
-        double w = -ab.dot(e);
-        if (w < 0.0 || v + w > d) return false;
-
-        double ood = 1.0/d;
-        t *= ood;
-        v *= ood;
-        w *= ood;
-
-        pt = a + ac*v + ab*w;
-        norm = f.normal;
-
-        double dist = (pt - ray.origin).magnitude();
-        if (dist < tmin || dist > tmax) return false;
+        pt = A + ab*-beta + ac*-gamma;
+        norm = face.normal;
 
         return true;
    }
